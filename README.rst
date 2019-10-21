@@ -3,13 +3,13 @@ firestone-engine
 ================
 
 
-Add a short description here!
+The strategy calculate engine
 
 
 Description
 ===========
 
-A longer description of your project goes here...
+Download the data from tushare and execute the submit strategy
 
 
 Note
