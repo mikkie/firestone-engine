@@ -5,9 +5,9 @@ console script. To run this script uncomment the following lines in the
 [options.entry_points] section in setup.cfg:
 
     console_scripts =
-         fibonacci = firestone_engine.skeleton:run
+         firestone = firestone_engine.main:run
 
-Then run `python setup.py install` which will install the command `fibonacci`
+Then run `python setup.py install` which will install the command `firestone`
 inside your current environment.
 Besides console scripts, the header (i.e. until _logger...) of this file can
 also be used as template for Python modules.
@@ -54,7 +54,7 @@ def parse_args(args):
       :obj:`argparse.Namespace`: command line parameters namespace
     """
     parser = argparse.ArgumentParser(
-        description="Just a Fibonacci demonstration")
+        description="strategy engine for firestone")
     parser.add_argument(
         "--version",
         action="version",
@@ -113,3 +113,9 @@ def run():
 
 if __name__ == "__main__":
     run()
+
+import ptvsd
+# 5678 is the default attach port in the VS Code debug configurations
+print("Waiting for debugger attach")
+ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
+ptvsd.wait_for_attach()

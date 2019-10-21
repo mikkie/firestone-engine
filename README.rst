@@ -11,6 +11,16 @@ Description
 
 Download the data from tushare and execute the submit strategy
 
+Usage
+=====
+
+python setup.py develop
+
+python setup.py test
+
+python setup.py install
+
+pip3 install --trusted-host pypi.python.org --trusted-host pypi.org --trusted-host files.pythonhosted.org
 
 Note
 ====

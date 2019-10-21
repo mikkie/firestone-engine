@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from firestone_engine.skeleton import fib
+from firestone_engine.main import fib
 
 __author__ = "aqua"
 __copyright__ = "aqua"
