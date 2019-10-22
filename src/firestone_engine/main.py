@@ -18,6 +18,7 @@ Note: This skeleton file can be safely removed if not needed!
 import argparse
 import sys
 import logging
+import tushare
 
 from firestone_engine import __version__
 
@@ -28,20 +29,16 @@ __license__ = "mit"
 _logger = logging.getLogger(__name__)
 
 
-def fib(n):
-    """Fibonacci example function
+def get_data(codes):
+    """get data from tushare
 
     Args:
-      n (int): integer
+      codes: list
 
     Returns:
-      int: n-th Fibonacci number
+      data
     """
-    assert n > 0
-    a, b = 1, 1
-    for i in range(n-1):
-        a, b = b, a+b
-    return a
+    return tushare.get_realtime_quotes(codes)
 
 
 def parse_args(args):
@@ -60,10 +57,10 @@ def parse_args(args):
         action="version",
         version="firestone-engine {ver}".format(ver=__version__))
     parser.add_argument(
-        dest="n",
-        help="n-th Fibonacci number",
-        type=int,
-        metavar="INT")
+        dest="codes",
+        help="the stock codes, i.e. 300793 600213",
+        nargs='+',
+        metavar="code")
     parser.add_argument(
         "-v",
         "--verbose",
@@ -100,8 +97,8 @@ def main(args):
     """
     args = parse_args(args)
     setup_logging(args.loglevel)
-    _logger.debug("Starting crazy calculations...")
-    print("The {}-th Fibonacci number is {}".format(args.n, fib(args.n)))
+    _logger.debug("Starting get data from tushare")
+    print(get_data(args.codes))
     _logger.info("Script ends here")
 
 
@@ -114,8 +111,9 @@ def run():
 if __name__ == "__main__":
     run()
 
+# to debug in vscode uncomment this block
 import ptvsd
 # 5678 is the default attach port in the VS Code debug configurations
-print("Waiting for debugger attach")
+print("start debug on port 5678")
 ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
-ptvsd.wait_for_attach()
+# ptvsd.wait_for_attach()

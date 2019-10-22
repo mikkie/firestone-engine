@@ -8,6 +8,10 @@ pylint = "*"
 
 [packages]
 tushare = "*"
+lxml = "*"
+pandas = "*"
+requests = "*"
+bs4 = "*"
 
 [requires]
 python_version = "3.6"
