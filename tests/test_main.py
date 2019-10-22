@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from firestone_engine.main import fib
+from firestone_engine.main import get_data
 
 __author__ = "aqua"
 __copyright__ = "aqua"
 __license__ = "mit"
 
 
-def test_fib():
-    assert fib(1) == 1
-    assert fib(2) == 1
-    assert fib(7) == 13
+def test_get_data():
+    assert len(get_data(['300793'])) == 1
     with pytest.raises(AssertionError):
-        fib(-10)
+        len(get_data(['2133']))
