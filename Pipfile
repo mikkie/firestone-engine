@@ -13,6 +13,8 @@ lxml = "*"
 pandas = "*"
 requests = "*"
 bs4 = "*"
+apscheduler = "*"
+pymongo = "*"
 
 [requires]
 python_version = "3.6"

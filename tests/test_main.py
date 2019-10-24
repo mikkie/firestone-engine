@@ -10,5 +10,3 @@ __license__ = "mit"
 
 def test_get_data():
     assert len(get_data(['300793'])) == 1
-    with pytest.raises(AssertionError):
-        len(get_data(['2133']))

@@ -17,8 +17,9 @@ Note: This skeleton file can be safely removed if not needed!
 
 import argparse
 import sys
+import time
 import logging
-import tushare
+from firestone_engine.DataLoader import DataLoader
 
 from firestone_engine import __version__
 
@@ -27,7 +28,6 @@ __copyright__ = "aqua"
 __license__ = "mit"
 
 _logger = logging.getLogger(__name__)
-
 
 def get_data(codes):
     """get data from tushare
@@ -38,7 +38,15 @@ def get_data(codes):
     Returns:
       data
     """
-    return tushare.get_realtime_quotes(codes)
+    data_loader = DataLoader(codes)
+    data_loader.start()
+    try:
+        while(not data_loader.is_finsih()):
+            time.sleep(100)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        data_loader.stop()
 
 
 def parse_args(args):
@@ -97,9 +105,7 @@ def main(args):
     """
     args = parse_args(args)
     setup_logging(args.loglevel)
-    _logger.debug("Starting get data from tushare")
-    print(get_data(args.codes))
-    _logger.info("Script ends here")
+    get_data(args.codes)
 
 
 def run():
@@ -116,4 +122,4 @@ import ptvsd
 # 5678 is the default attach port in the VS Code debug configurations
 print("start debug on port 5678")
 ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
-# ptvsd.wait_for_attach()
+ptvsd.wait_for_attach()
