@@ -5,9 +5,9 @@ console script. To run this script uncomment the following lines in the
 [options.entry_points] section in setup.cfg:
 
     console_scripts =
-         firestone = firestone_engine.main:run
+         firerock = firestone_engine.calculate:run
 
-Then run `python setup.py install` which will install the command `firestone`
+Then run `python setup.py install` which will install the command `firerock`
 inside your current environment.
 Besides console scripts, the header (i.e. until _logger...) of this file can
 also be used as template for Python modules.
@@ -19,7 +19,7 @@ import argparse
 import sys
 import time
 import logging
-from firestone_engine.DataLoader import DataLoader
+from firestone_engine.Trader import Trader
 
 from firestone_engine import __version__
 
@@ -29,24 +29,24 @@ __license__ = "mit"
 
 _logger = logging.getLogger(__name__)
 
-def get_data(codes):
-    """get data from tushare
+def calculate(tradeId):
+    """execute the trade
 
     Args:
-      codes: list
+      codes: tradeId
 
     Returns:
-      data
+      trade result
     """
-    data_loader = DataLoader(codes)
-    data_loader.start()
+    trader = Trader(tradeId)
+    trader.calculate()
     try:
-        while(not data_loader.is_finsih()):
+        while(not trader.is_finsih()):
             time.sleep(100)
     except KeyboardInterrupt:
         pass
     finally:
-        data_loader.stop()
+        trader.stop()
 
 
 def parse_args(args):
@@ -65,10 +65,9 @@ def parse_args(args):
         action="version",
         version="firestone-engine {ver}".format(ver=__version__))
     parser.add_argument(
-        dest="codes",
-        help="the stock codes, i.e. 300793 600213",
-        nargs='+',
-        metavar="code")
+        dest="tradeId",
+        help="the tradeId, i.e. 5db4fa20ea3ae4a6ff26a3d1",
+        metavar="tradeId")
     parser.add_argument(
         "-v",
         "--verbose",
@@ -105,7 +104,7 @@ def main(args):
     """
     args = parse_args(args)
     setup_logging(args.loglevel)
-    get_data(args.codes)
+    calculate(args.tradeId)
 
 
 def run():
