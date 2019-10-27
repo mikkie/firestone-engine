@@ -15,6 +15,7 @@ also be used as template for Python modules.
 Note: This skeleton file can be safely removed if not needed!
 """
 
+import ptvsd
 import argparse
 import sys
 import time
@@ -29,7 +30,7 @@ __license__ = "mit"
 
 _logger = logging.getLogger(__name__)
 
-def calculate(tradeId):
+def calculate(tradeId, is_mock):
     """execute the trade
 
     Args:
@@ -38,8 +39,8 @@ def calculate(tradeId):
     Returns:
       trade result
     """
-    trader = Trader(tradeId)
-    trader.calculate()
+    trader = Trader(tradeId, is_mock)
+    trader.start()
     try:
         while(not trader.is_finsih()):
             time.sleep(100)
@@ -69,6 +70,12 @@ def parse_args(args):
         help="the tradeId, i.e. 5db4fa20ea3ae4a6ff26a3d1",
         metavar="tradeId")
     parser.add_argument(
+        "-m",
+        "--mock",
+        dest="mock",
+        help="use mock trade",
+        action="store_true")    
+    parser.add_argument(
         "-v",
         "--verbose",
         dest="loglevel",
@@ -82,6 +89,12 @@ def parse_args(args):
         help="set loglevel to DEBUG",
         action="store_const",
         const=logging.DEBUG)
+    parser.add_argument(
+        "-d",
+        "--debug",
+        dest="debug",
+        help="set to debug mode use vscode",
+        action="store_true")
     return parser.parse_args(args)
 
 
@@ -103,8 +116,13 @@ def main(args):
       args ([str]): command line parameter list
     """
     args = parse_args(args)
+    if(args.debug):
+        # 5678 is the default attach port in the VS Code debug configurations
+        print("start debug on port 5678")
+        ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
+        ptvsd.wait_for_attach()
     setup_logging(args.loglevel)
-    calculate(args.tradeId)
+    calculate(args.tradeId, args.mock)
 
 
 def run():
@@ -115,10 +133,3 @@ def run():
 
 if __name__ == "__main__":
     run()
-
-# # to debug in vscode uncomment this block
-# import ptvsd
-# # 5678 is the default attach port in the VS Code debug configurations
-# print("start debug on port 5678")
-# ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
-# ptvsd.wait_for_attach()

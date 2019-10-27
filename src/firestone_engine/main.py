@@ -15,6 +15,7 @@ also be used as template for Python modules.
 Note: This skeleton file can be safely removed if not needed!
 """
 
+import ptvsd
 import argparse
 import sys
 import time
@@ -83,6 +84,12 @@ def parse_args(args):
         help="set loglevel to DEBUG",
         action="store_const",
         const=logging.DEBUG)
+    parser.add_argument(
+        "-d",
+        "--debug",
+        dest="debug",
+        help="set to debug mode use vscode",
+        action="store_true")        
     return parser.parse_args(args)
 
 
@@ -104,6 +111,11 @@ def main(args):
       args ([str]): command line parameter list
     """
     args = parse_args(args)
+    if(args.debug):
+        # 5678 is the default attach port in the VS Code debug configurations
+        print("start debug on port 5678")
+        ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
+        ptvsd.wait_for_attach()
     setup_logging(args.loglevel)
     get_data(args.codes)
 

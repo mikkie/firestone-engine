@@ -1,23 +1,43 @@
 import logging
 from pymongo import MongoClient
+from bson.objectid import ObjectId
+from datetime import datetime, timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
+from .Real import Real
+from .Mock import Mock
 
 class Trader(object):
 
-
     _logger = logging.getLogger(__name__)
 
-    _DB = 'firestone'
-    
-    def __init__(self, tradeId):
+    def __init__(self, tradeId, is_mock):
         self.tradeId = tradeId
+        self.is_mock = is_mock
+        self.scheduler = BackgroundScheduler()
+        end_date = datetime.now() + timedelta(days = 1)
+        end_date = '{}-{}-{}'.format(end_date.year,end_date.month,end_date.day)
+        self.scheduler.add_job(self.run,'cron',id="last_job", hour='10,13-14',minute='*',second='*/4', end_date=end_date)
+        self.scheduler.add_job(self.run,'cron',hour='9',minute='30-59',second='*/4', end_date=end_date)
+        self.scheduler.add_job(self.run,'cron',hour='11',minute='0-29',second='*/4', end_date=end_date)
+        if(self.is_mock):
+            self.handler = Mock(tradeId)
+        else:
+            self.handler = Real(tradeId)    
 
 
-    def calculate(self):
-        pass    
+    def start(self):
+        self.scheduler.start()
+        Trader._logger.info('job execute trade for {} is start'.format(self.tradeId))
+
+
+    def run(self):
+        self.handler.run() 
 
     def is_finsih(self):
-        pass
+        job = self.scheduler.get_job('last_job')
+        return job is None or job.next_run_time is None
 
     def stop(self):
-        pass        
+        self.handler.close()
+        self.scheduler.shutdown(wait=True)
+        Trader._logger.info('job execute trade for {} is stop'.format(self.tradeId))        
