@@ -23,7 +23,6 @@ class DataLoader(object):
         self.scheduler.add_job(self.run,'cron',id="last_job", hour='10,13-14',minute='*',second='*/3', end_date=end_date)
         self.scheduler.add_job(self.run,'cron',hour='9',minute='30-59',second='*/3', end_date=end_date)
         self.scheduler.add_job(self.run,'cron',hour='11',minute='0-29',second='*/3', end_date=end_date)
-        #self.scheduler.add_job(self.run,'cron',id='last_job', hour='17',minute='35',second='*/3', end_date=end_date)
 
 
     def start(self):
@@ -45,4 +44,5 @@ class DataLoader(object):
         json_list = json.loads(df.to_json(orient='records'))
         print(json_list)
         for json_data in json_list:
+            json_data['real_time'] = datetime.now()
             self.db[json_data['code']].insert(json_data)

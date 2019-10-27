@@ -37,6 +37,13 @@ pipenv run python setup.py test
 pipenv run python setup.py install
 pipenv run firestone
 
+Run
+====
+
+(1) get data
+
+pipenv run firestone 000793 600986
+
 Note
 ====
 
