@@ -28,6 +28,7 @@ class DataLoader(object):
 
     def start(self):
         self.scheduler.start()
+        DataLoader._logger.info('job get data for {} is start'.format(self.code_list))
 
     def is_finsih(self):
         job = self.scheduler.get_job('last_job')
