@@ -31,8 +31,10 @@ class Real(object):
 
 
     def run(self):
+        self.trade = self.db[self.cols['trades']].find_one({"_id" : ObjectId(self.tradeId)})
+        if(self.trade['state'] != '运行中'):
+            return False
         self.data = self.data_db[self.trade['params']['code'] + '-' + self.date].find()
-        self.trade = self.db[self.cols['trades']].find_one({"_id" : ObjectId(self.tradeId)})  
         logging.info('tradeId = {} load trade = {}'.format(self.tradeId, self.trade))
         self.config = self.db[self.cols['configs']].find_one({"userId" : self.trade['userId']})
         logging.info('tradeId = {} load config = {}'.format(self.tradeId, self.config))
@@ -44,7 +46,7 @@ class Real(object):
             op_cn = '买入' if self.strategy['op'] == 'buy' else '卖出' 
             result = self.createOrder(code, price, volume, self.strategy['op'])
             if(result is not None and result['errorcode'] == 0):
-                self.updateResult('订单提交: 在{},以{}{}[{}] {}股, 当前数据时间{}'.format(datetime.now, price, op_cn, code, volume, data[-1]['time']))
+                self.updateResult('订单提交: 在{},以{}{}[{}] {}股, 当前数据时间{}'.format(datetime.now(), price, op_cn, code, volume, data[-1]['time']))
                 return True
             else:
                 self.updateResult('订单提交失败, 请检查配置')
@@ -53,7 +55,7 @@ class Real(object):
 
 
     def updateResult(self, result):
-        self.db[self.cols['trades']].update_one({"_id" : ObjectId(self.tradeId)},{"result" : result})    
+        return self.db[self.cols['trades']].update_one({"_id" : ObjectId(self.tradeId)},{"$set" : {"result" : result}})    
 
 
     def createOrder(self, code, price, volume, op):

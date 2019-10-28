@@ -21,11 +21,16 @@ class TestMock(unittest.TestCase):
         self.assertEqual(self.mock.config['maxBuyNum'], 3.0)
 
 
-    def testCreateOrder(self):
-        result = self.mock.createOrder('000793', 3.45, 100, 'buy')
-        self.assertEqual(result['errorcode'], 0)
-        result = self.mock.createOrder('300152', 4.11, 100, 'sell')
-        self.assertEqual(result['errorcode'], 0)
+    # def testCreateOrder(self):
+    #     result = self.mock.createOrder('000793', 3.45, 100, 'buy')
+    #     self.assertEqual(result['errorcode'], 0)
+    #     result = self.mock.createOrder('300152', 4.11, 100, 'sell')
+    #     self.assertEqual(result['errorcode'], 0)
+
+
+    def testUpdateResult(self):
+        result = self.mock.updateResult('订单提交失败, 请检查配置')
+        self.assertEqual(result.modified_count, 1)  
 
     def tearDown(self):
         self.mock.close()

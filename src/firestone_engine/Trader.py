@@ -25,7 +25,7 @@ class Trader(object):
         if(self.is_mock):
             self.handler = Mock(tradeId, date)
         else:
-            self.handler = Real(tradeId, date)    
+            self.handler = Real(tradeId, date)  
 
 
     def start(self):
