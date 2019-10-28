@@ -15,6 +15,7 @@ also be used as template for Python modules.
 Note: This skeleton file can be safely removed if not needed!
 """
 
+import os
 import ptvsd
 import argparse
 import sys
@@ -30,7 +31,7 @@ __license__ = "mit"
 
 _logger = logging.getLogger(__name__)
 
-def calculate(tradeId, is_mock):
+def calculate(tradeId, is_mock, date):
     """execute the trade
 
     Args:
@@ -39,7 +40,7 @@ def calculate(tradeId, is_mock):
     Returns:
       trade result
     """
-    trader = Trader(tradeId, is_mock)
+    trader = Trader(tradeId, is_mock, date)
     trader.start()
     try:
         while(not trader.is_finsih()):
@@ -95,6 +96,16 @@ def parse_args(args):
         dest="debug",
         help="set to debug mode use vscode",
         action="store_true")
+    parser.add_argument(
+        "-t",
+        "--test",
+        dest="test",
+        help="set environment as test",
+        action="store_true")
+    parser.add_argument(
+        "--date",
+        dest="date",
+        help="get data date")       
     return parser.parse_args(args)
 
 
@@ -121,8 +132,12 @@ def main(args):
         print("start debug on port 5678")
         ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
         ptvsd.wait_for_attach()
+    if(args.test):
+        os.environ['FR_DB'] = 'firestone-test'
+    else:
+        os.environ['FR_DB'] = 'firestone'        
     setup_logging(args.loglevel)
-    calculate(args.tradeId, args.mock)
+    calculate(args.tradeId, args.mock, args.date)
 
 
 def run():

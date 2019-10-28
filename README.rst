@@ -50,6 +50,11 @@ pipenv run firerock 5db4fa20ea3ae4a6ff26a3d1
 
 pipenv run firerock 5db4fa20ea3ae4a6ff26a3d1 -m  (for mock)
 
+Test
+====
+
+tests\runTest.bat
+
 Note
 ====
 

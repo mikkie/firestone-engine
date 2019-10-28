@@ -10,7 +10,7 @@ class Trader(object):
 
     _logger = logging.getLogger(__name__)
 
-    def __init__(self, tradeId, is_mock):
+    def __init__(self, tradeId, is_mock, date):
         self.tradeId = tradeId
         self.is_mock = is_mock
         self.scheduler = BackgroundScheduler()
@@ -19,10 +19,13 @@ class Trader(object):
         self.scheduler.add_job(self.run,'cron',id="last_job", hour='10,13-14',minute='*',second='*/4', end_date=end_date)
         self.scheduler.add_job(self.run,'cron',hour='9',minute='30-59',second='*/4', end_date=end_date)
         self.scheduler.add_job(self.run,'cron',hour='11',minute='0-29',second='*/4', end_date=end_date)
+        if(date is None):
+            today = datetime.now()
+            date = '{}-{}-{}'.format(today.year,today.month,today.day)
         if(self.is_mock):
-            self.handler = Mock(tradeId)
+            self.handler = Mock(tradeId, date)
         else:
-            self.handler = Real(tradeId)    
+            self.handler = Real(tradeId, date)    
 
 
     def start(self):

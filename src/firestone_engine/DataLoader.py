@@ -18,7 +18,9 @@ class DataLoader(object):
         self.db = self.client[DataLoader._DB]
         self.code_list = code_list
         self.scheduler = BackgroundScheduler()
-        end_date = datetime.now() + timedelta(days = 1)
+        today = datetime.now()
+        self.today = '{}-{}-{}'.format(today.year,today.month,today.day)
+        end_date = today + timedelta(days = 1)
         end_date = '{}-{}-{}'.format(end_date.year,end_date.month,end_date.day)
         self.scheduler.add_job(self.run,'cron',id="last_job", hour='10,13-14',minute='*',second='*/3', end_date=end_date)
         self.scheduler.add_job(self.run,'cron',hour='9',minute='30-59',second='*/3', end_date=end_date)
@@ -45,4 +47,4 @@ class DataLoader(object):
         print(json_list)
         for json_data in json_list:
             json_data['real_time'] = datetime.now()
-            self.db[json_data['code']].insert(json_data)
+            self.db[json_data['code'] + '-' + self.today].insert(json_data)
