@@ -17,6 +17,7 @@ class Real(object):
     def __init__(self, tradeId, date=None):
         self.tradeId = tradeId
         self.date = date
+        self.lastRunTime = None
         self.client = MongoClient(Real._MONFO_URL, 27017)
         self.db = self.client[os.environ['FR_DB']]
         self.data_db = self.client[Real._DATA_DB]
@@ -33,9 +34,12 @@ class Real(object):
 
     def run(self):
         self.trade = self.db[self.cols['trades']].find_one({"_id" : ObjectId(self.tradeId)})
-        if(self.trade['state'] != Constants.STATE[0]):
-            return
         self.data = self.get_data()
+        if(self.trade['state'] != Constants.STATE[0]):
+            return None
+        if(self.data[-1]['time'] == self.lastRunTime):
+            return None
+        self.lastRunTime = self.data[-1]['time']
         logging.info('tradeId = {} load trade = {}'.format(self.tradeId, self.trade))
         self.config = self.db[self.cols['configs']].find_one({"userId" : self.trade['userId']})
         logging.info('tradeId = {} load config = {}'.format(self.tradeId, self.config))
@@ -47,8 +51,12 @@ class Real(object):
             result = self.createOrder(code, price, volume, self.strategy['op'])
             if(result is not None and result['errorcode'] == 0):
                 self.updateResult('订单提交: 在{},以{}{}[{}] {}股, 当前数据时间{}'.format(datetime.now(), price, op_cn, code, volume, self.data['data'][-1]['time']), state=Constants.STATE[2])
+                self.updateOrder(result)
+                return result['result']['data']['htbh']
             else:
                 self.updateResult('订单提交失败, 请检查配置', state=Constants.STATE[3])
+        return None
+
 
     def get_data(self):
         data = self.data_db[self.trade['params']['code'] + '-' + self.date].find()
@@ -61,6 +69,9 @@ class Real(object):
             'index' : list(index)
         }
 
+
+    def updateOrder(self, order):
+        return self.db[self.cols['trades']].update_one({"_id" : ObjectId(self.tradeId)},{"$set" : {"order" : order}})
 
     def updateResult(self, result, state=None):
         update = {"result" : result}

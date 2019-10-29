@@ -34,7 +34,11 @@ class Trader(object):
 
 
     def run(self):
-        self.handler.run() 
+        htbh = self.handler.run()
+        if(htbh is not None):
+            #query the ths trade result
+            pass
+
 
     def is_finsih(self):
         job = self.scheduler.get_job('last_job')
