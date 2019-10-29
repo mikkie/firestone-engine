@@ -35,22 +35,31 @@ class Real(object):
         self.trade = self.db[self.cols['trades']].find_one({"_id" : ObjectId(self.tradeId)})
         if(self.trade['state'] != Constants.STATE[0]):
             return
-        self.data = self.data_db[self.trade['params']['code'] + '-' + self.date].find()
+        self.data = self.get_data()
         logging.info('tradeId = {} load trade = {}'.format(self.tradeId, self.trade))
         self.config = self.db[self.cols['configs']].find_one({"userId" : self.trade['userId']})
         logging.info('tradeId = {} load config = {}'.format(self.tradeId, self.config))
-        data = list(self.data)
-        if(self.strategy.run(self.trade, self.config, data)):
+        if(self.strategy.run(self.trade, self.config, self.data['data'], self.data['index'])):
             code = self.trade['params']['code']
-            price = float(data[-1]['price'])
+            price = float(self.data['data'][-1]['price'])
             volume = int(self.trade['params']['volume'])
-            op_cn = '买入' if self.strategy['op'] == 'buy' else '卖出' 
+            op_cn = '买入' if self.strategy['op'] == 'buy' else '卖出'
             result = self.createOrder(code, price, volume, self.strategy['op'])
             if(result is not None and result['errorcode'] == 0):
-                self.updateResult('订单提交: 在{},以{}{}[{}] {}股, 当前数据时间{}'.format(datetime.now(), price, op_cn, code, volume, data[-1]['time']), state=Constants.STATE[2])
+                self.updateResult('订单提交: 在{},以{}{}[{}] {}股, 当前数据时间{}'.format(datetime.now(), price, op_cn, code, volume, self.data['data'][-1]['time']), state=Constants.STATE[2])
             else:
                 self.updateResult('订单提交失败, 请检查配置', state=Constants.STATE[3])
 
+    def get_data(self):
+        data = self.data_db[self.trade['params']['code'] + '-' + self.date].find()
+        if(self.trade['params']['code'].startswith('3')):
+            index = self.data_db[Constants.INDEX[5]].find()
+        else:
+            index = self.data_db[Constants.INDEX[0]].find()    
+        return {
+            'data' : list(data),
+            'index' : list(index)
+        }
 
 
     def updateResult(self, result, state=None):
