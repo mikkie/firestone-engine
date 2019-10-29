@@ -29,7 +29,7 @@ class TestMock(unittest.TestCase):
 
 
     def testUpdateResult(self):
-        result = self.mock.updateResult('订单提交失败, 请检查配置')
+        result = self.mock.updateResult('订单提交失败, 请检查配置',state='异常')
         self.assertEqual(result.modified_count, 1)  
 
     def tearDown(self):

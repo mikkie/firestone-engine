@@ -4,6 +4,7 @@ from pydoc import locate
 from datetime import datetime
 import os
 import logging
+from .Constants import Constants
 
 class Real(object):
 
@@ -12,7 +13,7 @@ class Real(object):
     _DATA_DB = 'firestone-data'
 
     _logger = logging.getLogger(__name__)
-    
+
     def __init__(self, tradeId, date=None):
         self.tradeId = tradeId
         self.date = date
@@ -32,8 +33,8 @@ class Real(object):
 
     def run(self):
         self.trade = self.db[self.cols['trades']].find_one({"_id" : ObjectId(self.tradeId)})
-        if(self.trade['state'] != '运行中'):
-            return False
+        if(self.trade['state'] != Constants.STATE[0]):
+            return
         self.data = self.data_db[self.trade['params']['code'] + '-' + self.date].find()
         logging.info('tradeId = {} load trade = {}'.format(self.tradeId, self.trade))
         self.config = self.db[self.cols['configs']].find_one({"userId" : self.trade['userId']})
@@ -46,16 +47,18 @@ class Real(object):
             op_cn = '买入' if self.strategy['op'] == 'buy' else '卖出' 
             result = self.createOrder(code, price, volume, self.strategy['op'])
             if(result is not None and result['errorcode'] == 0):
-                self.updateResult('订单提交: 在{},以{}{}[{}] {}股, 当前数据时间{}'.format(datetime.now(), price, op_cn, code, volume, data[-1]['time']))
-                return True
+                self.updateResult('订单提交: 在{},以{}{}[{}] {}股, 当前数据时间{}'.format(datetime.now(), price, op_cn, code, volume, data[-1]['time']), state=Constants.STATE[2])
             else:
-                self.updateResult('订单提交失败, 请检查配置')
-        return False
+                self.updateResult('订单提交失败, 请检查配置', state=Constants.STATE[3])
 
 
 
-    def updateResult(self, result):
-        return self.db[self.cols['trades']].update_one({"_id" : ObjectId(self.tradeId)},{"$set" : {"result" : result}})    
+    def updateResult(self, result, state=None):
+        update = {"result" : result}
+        if(state is not None):
+            update["state"] = state
+        Real._logger.info('update tradeId = {}, data = {}'.format(self.tradeId, update))    
+        return self.db[self.cols['trades']].update_one({"_id" : ObjectId(self.tradeId)},{"$set" : update})    
 
 
     def createOrder(self, code, price, volume, op):
