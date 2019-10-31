@@ -36,9 +36,11 @@ class Real(object):
         self.trade = self.db[self.cols['trades']].find_one({"_id" : ObjectId(self.tradeId)})
         self.data = self.get_data()
         if(self.trade['state'] != Constants.STATE[0]):
-            return None
+            return {'state' : self.trade['state']}
+        elif(self.trade['result'] is not None and (self.trade['result'] != '无' or self.trade['result'] != '')):
+            self.updateResult('无')
         if(self.data[-1]['time'] == self.lastRunTime):
-            return None
+            return {'state' : self.trade['state']}
         self.lastRunTime = self.data[-1]['time']
         logging.info('tradeId = {} load trade = {}'.format(self.tradeId, self.trade))
         self.config = self.db[self.cols['configs']].find_one({"userId" : self.trade['userId']})
@@ -52,10 +54,10 @@ class Real(object):
             if(result is not None and result['errorcode'] == 0):
                 self.updateResult('订单提交: 在{},以{}{}[{}] {}股, 当前数据时间{}'.format(datetime.now(), price, op_cn, code, volume, self.data['data'][-1]['time']), state=Constants.STATE[2])
                 self.updateOrder(result)
-                return result['result']['data']['htbh']
+                return {'state' : self.trade['state'], 'htbh' : result['result']['data']['htbh']}
             else:
                 self.updateResult('订单提交失败, 请检查配置', state=Constants.STATE[3])
-        return None
+        return {'state' : self.trade['state']}
 
 
     def get_data(self):
@@ -74,7 +76,9 @@ class Real(object):
         return self.db[self.cols['trades']].update_one({"_id" : ObjectId(self.tradeId)},{"$set" : {"order" : order}})
 
     def updateResult(self, result, state=None):
-        update = {"result" : result}
+        update = {}
+        if(result is not None):
+            update["result"] = result
         if(state is not None):
             update["state"] = state
         Real._logger.info('update tradeId = {}, data = {}'.format(self.tradeId, update))    
@@ -82,8 +86,20 @@ class Real(object):
 
 
     def createOrder(self, code, price, volume, op):
-        return {'errorcode' : -1, 'message' : 'not allowed'}
+        return {'errorcode' : -1, 'message' : 'not allowed', 'state' : Constants.STATE[3]}
 
+
+    def queryChenjiao(self, htbh):
+        return {'errorcode' : -1, 'message' : 'not allowed', 'state' : Constants.STATE[3]}
+
+
+    def check_chengjiao(self, htbh):
+        result = self.queryChenjiao(htbh)
+        if(result['errorcode'] == 99):
+            return
+        self.updateResult(result['message'], state=result['state']) 
+        if(result['errorcode'] == 0):
+            self.updateOrder(result['order'])
 
 
     def init_Config(self):

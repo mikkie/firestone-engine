@@ -2,6 +2,7 @@ from .Real import Real
 import requests
 import logging
 import json
+from .Constants import Constants
 
 class Mock(Real):
     
@@ -54,3 +55,22 @@ class Mock(Real):
         except Exception as e:
             Mock._logger.error('mock tradeId = {}, code = {}, price = {}, volume = {}, op = {}, faield with exception = {}'.format(self.tradeId, code, price, volume, op, e))
             return {'errorcode' : -1, 'message' : e}
+
+
+    def queryChenjiao(self, htbh):
+        self.load_cookie()
+        try:   
+            response = requests.post('http://mncg.10jqka.com.cn/cgiwt/delegate/qryChengjiao',headers=self.__header)
+            result = json.loads(response.text)
+            if(result['errorcode'] == 0):
+                orders = result['result']['list']
+                if(orders is not None and len(orders) > 0):
+                    for order in orders:
+                        if(order['d_2135'] == htbh):
+                            message = '以{}成交{}股'.format(order['d_2127'], order['d_2126'])
+                            return {'errorcode' : 0, 'state' : Constants.STATE[4], 'message' : message, 'order' : order}
+                return {'errorcode' : 99, 'state' : None, 'message' : None}
+            return {'errorcode' : result['errorcode'], 'state' : Constants.STATE[3], 'message' : result['errormsg']}   
+        except Exception as e:
+                Mock._logger.info('mock tradeId = {} query chengjiao faield e = {}'.format(self.tradeId, e))
+                return {'errorcode' : -1, 'state' : Constants.STATE[3], 'message' : e}    

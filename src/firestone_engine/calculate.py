@@ -43,7 +43,7 @@ def calculate(tradeId, is_mock, date):
     trader = Trader(tradeId, is_mock, date)
     trader.start()
     try:
-        while(not trader.is_finsih()):
+        while(not trader.is_finsih() and not trader.is_finsih_flag):
             time.sleep(100)
     except KeyboardInterrupt:
         pass
