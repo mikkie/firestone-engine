@@ -21,9 +21,6 @@ class Trader(object):
         self.scheduler.add_job(self.run,'cron',id="last_job", hour='10,13-14',minute='*',second='*/4', end_date=self.end_date)
         self.scheduler.add_job(self.run,'cron',hour='9',minute='30-59',second='*/4', end_date=self.end_date)
         self.scheduler.add_job(self.run,'cron',hour='11',minute='0-29',second='*/4', end_date=self.end_date)
-        if(date is None):
-            today = datetime.now()
-            date = '{}-{}-{}'.format(today.year,today.month,today.day)
         if(self.is_mock):
             self.handler = Mock(tradeId, date)
         else:

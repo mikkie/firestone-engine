@@ -66,7 +66,7 @@ db.mocktrades.insertMany([{
     }
 },{
     _id: ObjectId("5da1800e87b64fb6f4c32503"),
-    "code" : "300692",
+    "code" : "000993",
     "state" : "停止",
     "result" : "无",
     "userId" : ObjectId("5d905db9fc84d3224b0eb59c"),
@@ -74,18 +74,18 @@ db.mocktrades.insertMany([{
     "createDate" : new Date(),
     "deleted" : false,
     "params" : {
-        "code" : "300692",
+        "code" : "000993",
         "monitorTime" : {
             "start" : "09:30",
             "end" : "15:00"
         },
         "index_percent" : {
-            "low" : "-1.0",
-            "high" : "3.0"
+            "low" : "-0.18",
+            "high" : "-0.18"
         },
         "percent" : {
-            "low" : "-0.5",
-            "high" : "2.5"
+            "low" : "0.0",
+            "high" : "0.0"
         }
     }
 },{

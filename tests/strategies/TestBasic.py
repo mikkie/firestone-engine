@@ -7,10 +7,10 @@ class TestBasic(TestBase, unittest.TestCase):
 
     def get_test_config(self):
         return {
-            'tradeId' : '5db7e0a555609bb27252edb4',
+            'tradeId' : '5da1800e87b64fb6f4c32503',
             'configId' : '5db796e4429e4baab72826a0',
-            'data_col' : '000793-2019-10-28',
-            'index_col' : '000001-2019-10-28'
+            'data_col' : '000993-2019-10-30',
+            'index_col' : '000001-2019-10-30'
         }    
 
 
@@ -27,15 +27,15 @@ class TestBasic(TestBase, unittest.TestCase):
 
 
     def runAssert(self):
-        self.assertEqual(self.temp_data[-1]['time'], '09:31:00')
+        self.assertEqual(self.temp_data[-1]['time'], '09:31:33')
 
 
 if __name__ == "__main__":
     unittest.main()
 
-# to debug in vscode uncomment this block
-import ptvsd
-# 5678 is the default attach port in the VS Code debug configurations
-print("start debug on port 5678")
-ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
-ptvsd.wait_for_attach()
+# # to debug in vscode uncomment this block
+# import ptvsd
+# # 5678 is the default attach port in the VS Code debug configurations
+# print("start debug on port 5678")
+# ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
+# ptvsd.wait_for_attach()

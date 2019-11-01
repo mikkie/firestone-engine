@@ -2,6 +2,7 @@ from .Real import Real
 import requests
 import logging
 import json
+from datetime import datetime
 from .Constants import Constants
 
 class Mock(Real):
@@ -51,10 +52,15 @@ class Mock(Real):
         try:   
             response = requests.post('http://mncg.10jqka.com.cn/cgiwt/delegate/tradestock/',data=postData,headers=self.__header)
             Mock._logger.info('mock tradeId = {}, code = {}, price = {}, volume = {}, op = {}, submit order get response = {}'.format(self.tradeId, code, price, volume, op, response.text))
-            return json.loads(response.text)
+            result = json.loads(response.text)
+            if(result['errorcode'] == 0):
+                op_cn = '买入' if op == 'buy' else '卖出'
+                message = '订单提交: 在{},以{}{}[{}] {}股'.format(datetime.now(), price, op_cn, code, volume)
+                return {'state' : Constants.STATE[2], 'result' : message, 'order' : result}
+            return {'state' : Constants.STATE[3], 'result' : result['errormsg']}
         except Exception as e:
             Mock._logger.error('mock tradeId = {}, code = {}, price = {}, volume = {}, op = {}, faield with exception = {}'.format(self.tradeId, code, price, volume, op, e))
-            return {'errorcode' : -1, 'message' : e}
+            return {'state' : Constants.STATE[3], 'result' : '创建订单失败'}
 
 
     def queryChenjiao(self, htbh):
@@ -67,10 +73,10 @@ class Mock(Real):
                 if(orders is not None and len(orders) > 0):
                     for order in orders:
                         if(order['d_2135'] == htbh):
-                            message = '以{}成交{}股'.format(order['d_2127'], order['d_2126'])
-                            return {'errorcode' : 0, 'state' : Constants.STATE[4], 'message' : message, 'order' : order}
-                return {'errorcode' : 99, 'state' : None, 'message' : None}
-            return {'errorcode' : result['errorcode'], 'state' : Constants.STATE[3], 'message' : result['errormsg']}   
+                            message = '以{}成交{}股,合同编号{}'.format(order['d_2129'], order['d_2128'], htbh)
+                            return {'state' : Constants.STATE[4], 'result' : message, 'order' : order}
+                return {}
+            return {'state' : Constants.STATE[3], 'result' : result['errormsg']}   
         except Exception as e:
                 Mock._logger.info('mock tradeId = {} query chengjiao faield e = {}'.format(self.tradeId, e))
-                return {'errorcode' : -1, 'state' : Constants.STATE[3], 'message' : e}    
+                return {'state' : Constants.STATE[3], 'result' : '查询订单[{}]成交状况失败，请检查配置'.format(htbh)}    

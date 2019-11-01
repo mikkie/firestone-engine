@@ -16,6 +16,9 @@ class Real(object):
 
     def __init__(self, tradeId, date=None):
         self.tradeId = tradeId
+        if(date is None):
+            today = datetime.now()
+            date = '{}-{}-{}'.format(today.year,today.month,today.day)
         self.date = date
         self.lastRunTime = None
         self.client = MongoClient(Real._MONFO_URL, 27017)
@@ -33,56 +36,52 @@ class Real(object):
 
 
     def run(self):
-        self.trade = self.db[self.cols['trades']].find_one({"_id" : ObjectId(self.tradeId)})
-        self.data = self.get_data()
+        self.load_trade_config()
+        self.load_data()
         if(self.trade['state'] != Constants.STATE[0]):
             return {'state' : self.trade['state']}
-        elif(self.trade['result'] is not None and (self.trade['result'] != '无' or self.trade['result'] != '')):
-            self.updateResult('无')
-        if(self.data[-1]['time'] == self.lastRunTime):
+        elif(self.trade['result'] is not None and self.trade['result'] != '无' and self.trade['result'] != ''):
+            self.updateTrade({'result' : '无'})
+        if(self.data['data'][-1]['time'] == self.lastRunTime):
             return {'state' : self.trade['state']}
-        self.lastRunTime = self.data[-1]['time']
-        logging.info('tradeId = {} load trade = {}'.format(self.tradeId, self.trade))
-        self.config = self.db[self.cols['configs']].find_one({"userId" : self.trade['userId']})
-        logging.info('tradeId = {} load config = {}'.format(self.tradeId, self.config))
+        self.lastRunTime = self.data['data'][-1]['time']
+        Real._logger.info('tradeId = {} load trade = {}'.format(self.tradeId, self.trade))
+        Real._logger.info('tradeId = {} load config = {}'.format(self.tradeId, self.config))
         if(self.strategy.run(self.trade, self.config, self.data['data'], self.data['index'])):
             code = self.trade['params']['code']
             price = float(self.data['data'][-1]['price'])
             volume = int(self.trade['params']['volume'])
-            op_cn = '买入' if self.strategy['op'] == 'buy' else '卖出'
             result = self.createOrder(code, price, volume, self.strategy['op'])
-            if(result is not None and result['errorcode'] == 0):
-                self.updateResult('订单提交: 在{},以{}{}[{}] {}股, 当前数据时间{}'.format(datetime.now(), price, op_cn, code, volume, self.data['data'][-1]['time']), state=Constants.STATE[2])
-                self.updateOrder(result)
-                return {'state' : self.trade['state'], 'htbh' : result['result']['data']['htbh']}
-            else:
-                self.updateResult('订单提交失败, 请检查配置', state=Constants.STATE[3])
+            self.updateTrade(result)
+            if(result['state'] == Constants.STATE[2]):
+                return {'state' : result['state'], 'htbh' : result['order']['result']['data']['htbh']}
         return {'state' : self.trade['state']}
 
 
-    def get_data(self):
+    
+    def load_trade(self):
+        self.trade = self.db[self.cols['trades']].find_one({"_id" : ObjectId(self.tradeId)})
+    
+    def load_trade_config(self):
+        self.load_trade()
+        self.config = self.db[self.cols['configs']].find_one({"userId" : self.trade['userId']})    
+
+
+    def load_data(self):
         data = self.data_db[self.trade['params']['code'] + '-' + self.date].find()
         if(self.trade['params']['code'].startswith('3')):
-            index = self.data_db[Constants.INDEX[5]].find()
+            index = self.data_db[Constants.INDEX[5] + '-' + self.date].find()
         else:
-            index = self.data_db[Constants.INDEX[0]].find()    
-        return {
+            index = self.data_db[Constants.INDEX[0] + '-' + self.date].find()    
+        self.data = {
             'data' : list(data),
             'index' : list(index)
         }
 
 
-    def updateOrder(self, order):
-        return self.db[self.cols['trades']].update_one({"_id" : ObjectId(self.tradeId)},{"$set" : {"order" : order}})
 
-    def updateResult(self, result, state=None):
-        update = {}
-        if(result is not None):
-            update["result"] = result
-        if(state is not None):
-            update["state"] = state
-        Real._logger.info('update tradeId = {}, data = {}'.format(self.tradeId, update))    
-        return self.db[self.cols['trades']].update_one({"_id" : ObjectId(self.tradeId)},{"$set" : update})    
+    def updateTrade(self, update):
+        return self.db[self.cols['trades']].update_one({"_id" : ObjectId(self.tradeId)},{"$set" : update})
 
 
     def createOrder(self, code, price, volume, op):
@@ -94,19 +93,16 @@ class Real(object):
 
 
     def check_chengjiao(self, htbh):
-        result = self.queryChenjiao(htbh)
-        if(result['errorcode'] == 99):
+        update = self.queryChenjiao(htbh)
+        if(len(update) == 0):
             return
-        self.updateResult(result['message'], state=result['state']) 
-        if(result['errorcode'] == 0):
-            self.updateOrder(result['order'])
+        self.updateTrade(update)
 
 
     def init_Config(self):
-        self.trade = self.db[self.cols['trades']].find_one({"_id" : ObjectId(self.tradeId)})
+        self.load_trade_config()
         self.strategyMeta = self.db['strategies'].find_one({"_id" : self.trade['strategyId']})
-        self.config = self.db[self.cols['configs']].find_one({"userId" : self.trade['userId']})
-        logging.info('tradeId = {} load startegy = {}'.format(self.tradeId, self.strategyMeta))
+        Real._logger.info('tradeId = {} load startegy = {}'.format(self.tradeId, self.strategyMeta))
         class_name = self.strategyMeta['url']
         strategyClass = locate('firestone_engine.strategies.{}.{}'.format(class_name, class_name))
         self.strategy = strategyClass()
