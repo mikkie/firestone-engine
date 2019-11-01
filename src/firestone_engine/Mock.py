@@ -35,7 +35,7 @@ class Mock(Real):
         self.__header['Cookie'] = self.config['cookie']
 
 
-    def createOrder(self, code, price, volume, op):
+    def createDelegate(self, code, price, volume, op):
         self.load_cookie()
         tradeType = 'cmd_wt_mairu' if op == 'buy' else 'cmd_wt_maichu'
         postData = {
@@ -78,5 +78,23 @@ class Mock(Real):
                 return {}
             return {'state' : Constants.STATE[3], 'result' : result['errormsg']}   
         except Exception as e:
-                Mock._logger.info('mock tradeId = {} query chengjiao faield e = {}'.format(self.tradeId, e))
-                return {'state' : Constants.STATE[3], 'result' : '查询订单[{}]成交状况失败，请检查配置'.format(htbh)}    
+                Mock._logger.error('mock tradeId = {} query chengjiao faield e = {}'.format(self.tradeId, e))
+                return {'state' : Constants.STATE[3], 'result' : '查询订单[{}]成交状况失败，请检查配置'.format(htbh)}  
+
+
+
+    def cancelDelegate(self, htbh, wtrq):
+        self.load_cookie()                   
+        postData = {
+            'htbh' : htbh,
+            'wtrq' : wtrq,
+        }
+        try:   
+            response = requests.post('http://mncg.10jqka.com.cn/cgiwt/delegate/cancelDelegated/',data=postData,headers=self.__header)
+            result = json.loads(response.text)
+            if(result['errorcode'] == 0):
+                return {'state' : Constants.STATE[1], 'result' : '合同[{}]已撤销'.format(htbh)}
+            return {'state' : Constants.STATE[5], 'result' : result['errormsg']}
+        except Exception as e:
+                Mock._logger.error('can deligate [{}] faield, e = {}'.format(htbh, e))
+                return {'state' : Constants.STATE[5], 'result' : '合同[{}]撤销失败，请检查配置'.format(htbh)}    

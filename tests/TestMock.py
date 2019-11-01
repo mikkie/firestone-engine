@@ -56,10 +56,10 @@ class TestMock(unittest.TestCase):
 
 
     # def testCreateOrder(self):
-    #     result = self.mock.createOrder('000793', 2.74, 100, 'buy')
+    #     result = self.mock.createDelegate('000793', 2.74, 100, 'buy')
     #     self.assertEqual(result['state'], '已提交')
     #     print(result['result'])
-    #     result = self.mock.createOrder('000793', 3.34, 100, 'sell')
+    #     result = self.mock.createDelegate('000793', 3.34, 100, 'sell')
     #     self.assertEqual(result['state'], '已提交')
     #     print(result['result'])
 
@@ -67,6 +67,12 @@ class TestMock(unittest.TestCase):
     # def testQueryChengjiao(self):
     #     result = self.mock.queryChenjiao('1252365040')
     #     self.assertEqual(result['state'],'已完成')
+    #     print(result['result'])
+
+
+    # def testCancelDeligate(self):
+    #     result = self.mock.cancelDelegate('1253762489', '20191101')
+    #     self.assertEqual(result['state'],'停止')
     #     print(result['result'])
 
 

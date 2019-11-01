@@ -37,7 +37,10 @@ class Real(object):
 
     def run(self):
         self.load_trade_config()
+        Real._logger.info('tradeId = {} load trade = {}, config = {}'.format(self.tradeId, self.trade, self.config))
         self.load_data()
+        if(self.trade['state'] == Constants.STATE[5]):
+            self.cancelOrder()
         if(self.trade['state'] != Constants.STATE[0]):
             return {'state' : self.trade['state']}
         elif(self.trade['result'] is not None and self.trade['result'] != '无' and self.trade['result'] != ''):
@@ -45,13 +48,8 @@ class Real(object):
         if(self.data['data'][-1]['time'] == self.lastRunTime):
             return {'state' : self.trade['state']}
         self.lastRunTime = self.data['data'][-1]['time']
-        Real._logger.info('tradeId = {} load trade = {}'.format(self.tradeId, self.trade))
-        Real._logger.info('tradeId = {} load config = {}'.format(self.tradeId, self.config))
         if(self.strategy.run(self.trade, self.config, self.data['data'], self.data['index'])):
-            code = self.trade['params']['code']
-            price = float(self.data['data'][-1]['price'])
-            volume = int(self.trade['params']['volume'])
-            result = self.createOrder(code, price, volume, self.strategy['op'])
+            result = self.createOrder()
             self.updateTrade(result)
             if(result['state'] == Constants.STATE[2]):
                 return {'state' : result['state'], 'htbh' : result['order']['result']['data']['htbh']}
@@ -84,19 +82,45 @@ class Real(object):
         return self.db[self.cols['trades']].update_one({"_id" : ObjectId(self.tradeId)},{"$set" : update})
 
 
-    def createOrder(self, code, price, volume, op):
+    def createOrder(self):
+        code = self.trade['params']['code']
+        price = float(self.data['data'][-1]['price'])
+        volume = int(self.trade['params']['volume'])
+        return self.createDelegate(code, price, volume, self.strategy['op'])
+
+
+    def createDelegate(self, code, price, volume, op):
         return {'errorcode' : -1, 'message' : 'not allowed', 'state' : Constants.STATE[3]}
 
 
-    def queryChenjiao(self, htbh):
-        return {'errorcode' : -1, 'message' : 'not allowed', 'state' : Constants.STATE[3]}
+    def cancelOrder(self):
+        if('order' not in self.trade):
+            Real._logger.error('no order found in trade = {}, failde to cancel'.format(self.tradeId))
+            self.updateTrade({'state' : Constants.STATE[1]})
+            return
+        htbh = self.trade['order']['result']['data']['htbh']
+        today = datetime.now()
+        htrq = '{}{}{}'.format(today.year,today.month,today.day)
+        self.cancelDelegate(htbh, htrq)
+
+
+    def cancelDelegate(self, htbh, wtrq):
+        return {'errorcode' : -1, 'message' : 'not allowed', 'state' : Constants.STATE[3]}  
+
 
 
     def check_chengjiao(self, htbh):
         update = self.queryChenjiao(htbh)
         if(len(update) == 0):
             return
-        self.updateTrade(update)
+        self.updateTrade(update)  
+
+
+    def queryChenjiao(self, htbh):
+        return {'errorcode' : -1, 'message' : 'not allowed', 'state' : Constants.STATE[3]}
+
+
+    
 
 
     def init_Config(self):
