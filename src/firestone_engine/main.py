@@ -30,7 +30,7 @@ __license__ = "mit"
 
 _logger = logging.getLogger(__name__)
 
-def get_data(codes):
+def get_data(codes, is_mock, date, hours, minutes):
     """get data from tushare
 
     Args:
@@ -39,7 +39,10 @@ def get_data(codes):
     Returns:
       data
     """
-    data_loader = DataLoader(codes)
+    if(hours is None):
+        data_loader = DataLoader(codes, is_mock=is_mock, date=date)
+    else:
+        data_loader = DataLoader(codes, is_mock=is_mock, date=date, hours=hours, minutes=minutes)  
     data_loader.start()
     try:
         while(not data_loader.is_finsih()):
@@ -89,7 +92,29 @@ def parse_args(args):
         "--debug",
         dest="debug",
         help="set to debug mode use vscode",
-        action="store_true")        
+        action="store_true")
+    parser.add_argument(
+        "--hours",
+        dest="hours",
+        help="i.e. 9 10,13-14 11",
+        nargs='+',
+        metavar="hour")
+    parser.add_argument(
+        "--minutes",
+        dest="minutes",
+        help="i.e. 30-59 * 0-29",
+        nargs='+',
+        metavar="minute")
+    parser.add_argument(
+        "-m",
+        "--mock",
+        dest="mock",
+        help="use mock data",
+        action="store_true")
+    parser.add_argument(
+        "--date",
+        dest="date",
+        help="get data date")             
     return parser.parse_args(args)
 
 
@@ -117,7 +142,7 @@ def main(args):
         ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
         ptvsd.wait_for_attach()
     setup_logging(args.loglevel)
-    get_data(args.codes)
+    get_data(args.codes, args.mock, args.date, args.hours, args.minutes)
 
 
 def run():

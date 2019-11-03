@@ -31,7 +31,7 @@ __license__ = "mit"
 
 _logger = logging.getLogger(__name__)
 
-def calculate(tradeId, is_mock, date):
+def calculate(tradeId, is_mock, date, hours, minutes):
     """execute the trade
 
     Args:
@@ -40,7 +40,10 @@ def calculate(tradeId, is_mock, date):
     Returns:
       trade result
     """
-    trader = Trader(tradeId, is_mock, date)
+    if(hours is None):
+        trader = Trader(tradeId, is_mock, date)
+    else:    
+        trader = Trader(tradeId, is_mock, date, hours=hours, minutes=minutes)
     trader.start()
     try:
         while(not trader.is_finsih() and not trader.is_finsih_flag):
@@ -106,6 +109,18 @@ def parse_args(args):
         "--date",
         dest="date",
         help="get data date")       
+    parser.add_argument(
+        "--hours",
+        dest="hours",
+        help="i.e. 9 10,13-14 11",
+        nargs='+',
+        metavar="hour")
+    parser.add_argument(
+        "--minutes",
+        dest="minutes",
+        help="i.e. 30-59 * 0-29",
+        nargs='+',
+        metavar="minute")        
     return parser.parse_args(args)
 
 
@@ -137,7 +152,7 @@ def main(args):
     else:
         os.environ['FR_DB'] = 'firestone'        
     setup_logging(args.loglevel)
-    calculate(args.tradeId, args.mock, args.date)
+    calculate(args.tradeId, args.mock, args.date, args.hours, args.minutes)
 
 
 def run():

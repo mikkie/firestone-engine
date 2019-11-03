@@ -39,8 +39,10 @@ class Real(object):
         self.load_trade_config()
         Real._logger.info('tradeId = {} load trade = {}, config = {}'.format(self.tradeId, self.trade, self.config))
         self.load_data()
+        if(len(self.data['data']) == 0):
+            return {'state' : self.trade['state']}
         if(self.trade['state'] == Constants.STATE[5]):
-            self.cancelOrder()
+            return self.cancelOrder()
         if(self.trade['state'] != Constants.STATE[0]):
             return {'state' : self.trade['state']}
         elif(self.trade['result'] is not None and self.trade['result'] != '无' and self.trade['result'] != ''):
@@ -50,7 +52,6 @@ class Real(object):
         self.lastRunTime = self.data['data'][-1]['time']
         if(self.strategy.run(self.trade, self.config, self.data['data'], self.data['index'])):
             result = self.createOrder()
-            self.updateTrade(result)
             if(result['state'] == Constants.STATE[2]):
                 return {'state' : result['state'], 'htbh' : result['order']['result']['data']['htbh']}
         return {'state' : self.trade['state']}
@@ -86,7 +87,9 @@ class Real(object):
         code = self.trade['params']['code']
         price = float(self.data['data'][-1]['price'])
         volume = int(self.trade['params']['volume'])
-        return self.createDelegate(code, price, volume, self.strategy['op'])
+        result = self.createDelegate(code, price, volume, self.strategyMeta['op'])
+        self.updateTrade(result)
+        return result
 
 
     def createDelegate(self, code, price, volume, op):
@@ -96,12 +99,15 @@ class Real(object):
     def cancelOrder(self):
         if('order' not in self.trade):
             Real._logger.error('no order found in trade = {}, failde to cancel'.format(self.tradeId))
-            self.updateTrade({'state' : Constants.STATE[1]})
-            return
+            update = {'state' : Constants.STATE[1], 'result' : '未找到订单'}
+            self.updateTrade(update)
+            return update
         htbh = self.trade['order']['result']['data']['htbh']
         today = datetime.now()
         htrq = '{}{}{}'.format(today.year,today.month,today.day)
-        self.cancelDelegate(htbh, htrq)
+        result = self.cancelDelegate(htbh, htrq)
+        self.updateTrade(result)
+        return result
 
 
     def cancelDelegate(self, htbh, wtrq):

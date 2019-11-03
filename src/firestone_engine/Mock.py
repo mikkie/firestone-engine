@@ -94,7 +94,7 @@ class Mock(Real):
             result = json.loads(response.text)
             if(result['errorcode'] == 0):
                 return {'state' : Constants.STATE[1], 'result' : '合同[{}]已撤销'.format(htbh)}
-            return {'state' : Constants.STATE[5], 'result' : result['errormsg']}
+            return {'state' : Constants.STATE[3], 'result' : result['errormsg']}
         except Exception as e:
                 Mock._logger.error('can deligate [{}] faield, e = {}'.format(htbh, e))
-                return {'state' : Constants.STATE[5], 'result' : '合同[{}]撤销失败，请检查配置'.format(htbh)}    
+                return {'state' : Constants.STATE[3], 'result' : '合同[{}]撤销失败，请检查配置'.format(htbh)}   

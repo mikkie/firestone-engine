@@ -1,6 +1,7 @@
 import logging
 from .Base import Base
 from datetime import datetime
+from decimal import Decimal
 from firestone_engine.Utils import Utils
 
 class Basic(Base):
@@ -17,8 +18,8 @@ class Basic(Base):
         price = float(self.indexLastRow['price'])
         pre_close = float(self.indexLastRow['pre_close'])
         percent = Utils.round_dec((price - pre_close) / pre_close * 100)
-        percent_low = float(self.trade['params']['index_percent']['low'])
-        percent_high = float(self.trade['params']['index_percent']['high'])
+        percent_low = Decimal(self.trade['params']['index_percent']['low'])
+        percent_high = Decimal(self.trade['params']['index_percent']['high'])
         percent_high = 10.1 if percent_high >= 10.0 else percent_high
         flag = (percent >= percent_low and percent <= percent_high)
         if(flag):
@@ -30,8 +31,8 @@ class Basic(Base):
         price = float(self.dataLastRow['price'])
         pre_close = float(self.dataLastRow['pre_close'])
         percent = Utils.round_dec((price - pre_close) / pre_close * 100)
-        percent_low = float(self.trade['params']['percent']['low'])
-        percent_high = float(self.trade['params']['percent']['high'])
+        percent_low = Decimal(self.trade['params']['percent']['low'])
+        percent_high = Decimal(self.trade['params']['percent']['high'])
         percent_high = 10.1 if percent_high >= 10.0 else percent_high
         flag = (percent >= percent_low and percent <= percent_high)
         if(flag):
