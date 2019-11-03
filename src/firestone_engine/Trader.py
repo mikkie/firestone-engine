@@ -59,7 +59,7 @@ class Trader(object):
         return job is None or job.next_run_time is None
 
     def stop(self):
-        self.handler.updateTrade({'state' : Constants.STATE[1]})
+        self.handler.updateTrade({'state' : Constants.STATE[4]})
         self.handler.close()
         self.scheduler.shutdown(wait=False)
         Trader._logger.info('job execute trade for {} is stop'.format(self.tradeId))        
