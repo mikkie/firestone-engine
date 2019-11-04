@@ -72,7 +72,7 @@ class TestMock(unittest.TestCase):
 
     # def testCancelDeligate(self):
     #     result = self.mock.cancelDelegate('1253762489', '20191101')
-    #     self.assertEqual(result['state'],'停止')
+    #     self.assertEqual(result['state'],'暂停')
     #     print(result['result'])
 
 
