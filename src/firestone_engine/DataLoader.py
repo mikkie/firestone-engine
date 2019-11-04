@@ -17,6 +17,7 @@ class DataLoader(object):
         self.hours = hours
         self.minutes = minutes
         self.is_mock = is_mock
+        self.is_finsih_flag = False
         self.date = date
         self.lastRows = {}
         self.client = MongoClient(DataLoader._MONFO_URL, 27017)
@@ -48,7 +49,7 @@ class DataLoader(object):
 
     def is_finsih(self):
         job = self.scheduler.get_job('last_job')
-        return job is None or job.next_run_time is None
+        return job is None or job.next_run_time is None or self.is_finsih_flag
 
     def stop(self):
         self.client.close()
@@ -57,6 +58,9 @@ class DataLoader(object):
 
 
     def run(self):
+        if(len(self.code_list) == 0):
+            self.is_finsih_flag = True
+            return
         if(self.is_mock):
             self.run_mock()
         else:

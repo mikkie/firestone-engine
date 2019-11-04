@@ -56,7 +56,7 @@ class Trader(object):
 
     def is_finsih(self):
         job = self.scheduler.get_job('last_job')
-        return job is None or job.next_run_time is None
+        return job is None or job.next_run_time is None or self.is_finsih_flag
 
     def stop(self):
         self.handler.updateTrade({'state' : Constants.STATE[4]})
