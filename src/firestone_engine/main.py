@@ -96,13 +96,13 @@ def parse_args(args):
     parser.add_argument(
         "--hours",
         dest="hours",
-        help="i.e. 9 10,13-14 11",
+        help="i.e. 9 11 10,13-14",
         nargs='+',
         metavar="hour")
     parser.add_argument(
         "--minutes",
         dest="minutes",
-        help="i.e. 30-59 * 0-29",
+        help="i.e. 30-59 0-29 *",
         nargs='+',
         metavar="minute")
     parser.add_argument(

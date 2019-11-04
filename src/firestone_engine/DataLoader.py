@@ -13,7 +13,7 @@ class DataLoader(object):
 
     _DB = 'firestone-data'
     
-    def __init__(self, code_list, is_mock=False, date=None, hours=['9','10,13-14','11'], minutes=['30-59','*','0-29']):
+    def __init__(self, code_list, is_mock=False, date=None, hours=['9','11','10,13-14'], minutes=['30-59','0-29','*']):
         self.hours = hours
         self.minutes = minutes
         self.is_mock = is_mock
@@ -21,15 +21,25 @@ class DataLoader(object):
         self.lastRows = {}
         self.client = MongoClient(DataLoader._MONFO_URL, 27017)
         self.db = self.client[DataLoader._DB]
-        self.code_list = code_list
         self.scheduler = BackgroundScheduler()
         today = datetime.now()
         self.today = '{}-{}-{}'.format(today.year,today.month,today.day)
+        self.code_list = self.get_code_list(code_list, date)
         end_date = today + timedelta(days = 1)
         end_date = '{}-{}-{}'.format(end_date.year,end_date.month,end_date.day)
-        self.scheduler.add_job(self.run,'cron',id="last_job", hour=hours[1],minute=minutes[1],second='*/3', end_date=end_date)
+        self.scheduler.add_job(self.run,'cron',id="last_job", hour=hours[2],minute=minutes[2],second='*/3', end_date=end_date)
         self.scheduler.add_job(self.run,'cron',hour=hours[0],minute=minutes[0],second='*/3', end_date=end_date)
-        self.scheduler.add_job(self.run,'cron',hour=hours[2],minute=minutes[2],second='*/3', end_date=end_date)
+        self.scheduler.add_job(self.run,'cron',hour=hours[1],minute=minutes[1],second='*/3', end_date=end_date)
+
+
+    def get_code_list(self, code_list, date):
+        colls = list(self.db.list_collections())
+        codes = []
+        date = self.today if self.date is None else self.date
+        for code in code_list:
+            if(code not in [coll['name'] for coll in colls]):
+                codes.append(code)   
+        return codes        
 
 
     def start(self):

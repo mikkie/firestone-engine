@@ -11,7 +11,7 @@ class Trader(object):
 
     _logger = logging.getLogger(__name__)
 
-    def __init__(self, tradeId, is_mock, date ,hours=['9','10,13-14','11'], minutes=['30-59','*','0-29']):
+    def __init__(self, tradeId, is_mock, date ,hours=['9','11','10,13-14'], minutes=['30-59','0-29','*']):
         self.hours = hours
         self.minutes = minutes
         self.tradeId = tradeId
@@ -20,9 +20,9 @@ class Trader(object):
         self.scheduler = BackgroundScheduler()
         end_date = datetime.now() + timedelta(days = 1)
         self.end_date = '{}-{}-{}'.format(end_date.year,end_date.month,end_date.day)
-        self.scheduler.add_job(self.run,'cron',id="last_job", hour=hours[1],minute=minutes[1],second='*/4', end_date=self.end_date)
+        self.scheduler.add_job(self.run,'cron',id="last_job", hour=hours[2],minute=minutes[2],second='*/4', end_date=self.end_date)
         self.scheduler.add_job(self.run,'cron',hour=hours[0],minute=minutes[0],second='*/4', end_date=self.end_date)
-        self.scheduler.add_job(self.run,'cron',hour=hours[2],minute=minutes[2],second='*/4', end_date=self.end_date)
+        self.scheduler.add_job(self.run,'cron',hour=hours[1],minute=minutes[1],second='*/4', end_date=self.end_date)
         if(self.is_mock):
             self.handler = Mock(tradeId, date)
         else:
