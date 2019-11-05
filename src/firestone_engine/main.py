@@ -20,6 +20,7 @@ import argparse
 import sys
 import time
 import logging
+from logging.handlers import TimedRotatingFileHandler
 from firestone_engine.DataLoader import DataLoader
 
 from firestone_engine import __version__
@@ -29,6 +30,7 @@ __copyright__ = "aqua"
 __license__ = "mit"
 
 _logger = logging.getLogger(__name__)
+_handler = TimedRotatingFileHandler('logs/firestone.log', when='D', interval=1, backupCount=10 ,encoding='UTF-8')
 
 def get_data(codes, is_mock, date, hours, minutes):
     """get data from tushare
@@ -125,8 +127,7 @@ def setup_logging(loglevel):
       loglevel (int): minimum loglevel for emitting messages
     """
     logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
-    logging.basicConfig(level=loglevel, stream=sys.stdout,
-                        format=logformat, datefmt="%Y-%m-%d %H:%M:%S")
+    logging.basicConfig(level=loglevel, format=logformat, datefmt="%Y-%m-%d %H:%M:%S", handlers=[_handler])
 
 
 def main(args):
