@@ -18,33 +18,40 @@ class DataLoader(object):
         self.minutes = minutes
         self.is_mock = is_mock
         self.is_finsih_flag = False
-        self.date = date
         self.lastRows = {}
         self.client = MongoClient(DataLoader._MONFO_URL, 27017)
         self.db = self.client[DataLoader._DB]
         self.scheduler = BackgroundScheduler()
+        self.date = date
         today = datetime.now()
         self.today = '{}-{}-{}'.format(today.year,today.month,today.day)
-        self.code_list = self.get_code_list(code_list, date)
+        if(self.date is None):
+            self.date = self.today
         end_date = today + timedelta(days = 1)
         end_date = '{}-{}-{}'.format(end_date.year,end_date.month,end_date.day)
+        self.code_list = self.get_code_list(code_list)
         for i, hour in enumerate(hours):
             if(i == len(hours) - 1):
                 self.scheduler.add_job(self.run,'cron',id="last_job",hour=hour,minute=minutes[i],second='*/3', end_date=end_date)
             else:
                 self.scheduler.add_job(self.run,'cron',hour=hour,minute=minutes[i],second='*/3', end_date=end_date)
 
-    def get_code_list(self, code_list, date):
+    def get_code_list(self, code_list):
         colls = list(self.db.list_collections())
         codes = []
-        date = self.today if self.date is None else self.date
         for code in code_list:
-            if(code not in [coll['name'] for coll in colls]):
-                codes.append(code)   
+            name = code + '-' + self.date + ('-m' if self.is_mock else '')
+            if(name not in [coll['name'] for coll in colls]):
+                codes.append(code)
+                self.db.create_collection(name)
+        if(len(codes) == 0):
+            self.is_finsih_flag = True        
         return codes        
 
 
     def start(self):
+        if(self.is_finsih_flag):
+            return
         self.scheduler.start()
         DataLoader._logger.info('job get data for {} is start'.format(self.code_list))
 
@@ -60,9 +67,6 @@ class DataLoader(object):
 
     def run(self):
         try:
-            if(len(self.code_list) == 0):
-                self.is_finsih_flag = True
-                return
             if(self.is_mock):
                 self.run_mock()
             else:
@@ -86,9 +90,6 @@ class DataLoader(object):
             if(not hasattr(self, 'mock_count')):
                 self.mock_count = 0
                 self.data = {}
-                if(self.date is None):
-                    today = datetime.now()
-                    self.date = '{}-{}-{}'.format(today.year,today.month,today.day)
                 for code in self.code_list:
                     self.data[code + '-' + self.date] = list(self.db[code + '-' + self.date].find()) 
                     self.lastRows[code] = None
