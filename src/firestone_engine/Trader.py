@@ -35,20 +35,26 @@ class Trader(object):
 
 
     def run(self):
-        result = self.handler.run()
-        #order submit
-        if(result['state'] == Constants.STATE[2] and 'htbh' in result):
-            htbh = result['htbh']
-            self.scheduler.add_job(self.check_chengjiao,'cron',kwargs={'htbh' : htbh},hour=self.hours[1],minute=self.minutes[1],second='*/10', end_date=self.end_date)
-            self.scheduler.add_job(self.check_chengjiao,'cron',kwargs={'htbh' : htbh},hour=self.hours[0],minute=self.minutes[0],second='*/10', end_date=self.end_date)
-            self.scheduler.add_job(self.check_chengjiao,'cron',kwargs={'htbh' : htbh},hour=self.hours[2],minute=self.minutes[2],second='*/10', end_date=self.end_date)
-        #done
-        elif (result['state'] == Constants.STATE[4]):
-            self.is_finsih_flag = True
+        try:
+            result = self.handler.run()
+            #order submit
+            if(result['state'] == Constants.STATE[2] and 'htbh' in result):
+                htbh = result['htbh']
+                self.scheduler.add_job(self.check_chengjiao,'cron',kwargs={'htbh' : htbh},hour=self.hours[1],minute=self.minutes[1],second='*/10', end_date=self.end_date)
+                self.scheduler.add_job(self.check_chengjiao,'cron',kwargs={'htbh' : htbh},hour=self.hours[0],minute=self.minutes[0],second='*/10', end_date=self.end_date)
+                self.scheduler.add_job(self.check_chengjiao,'cron',kwargs={'htbh' : htbh},hour=self.hours[2],minute=self.minutes[2],second='*/10', end_date=self.end_date)
+            #done
+            elif (result['state'] == Constants.STATE[4]):
+                self.is_finsih_flag = True
+        except Exception as e:
+            Trader._logger.error(e)
 
 
     def check_chengjiao(self, htbh):
-        self.handler.check_chengjiao(htbh)
+        try:
+            self.handler.check_chengjiao(htbh)
+        except Exception as e:
+            Trader._logger.error(e)
 
 
 

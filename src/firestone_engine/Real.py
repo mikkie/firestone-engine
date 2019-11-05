@@ -37,7 +37,6 @@ class Real(object):
 
     def run(self):
         self.load_trade_config()
-        Real._logger.info('tradeId = {} load trade = {}, config = {}'.format(self.tradeId, self.trade, self.config))
         self.load_data()
         if(len(self.data['data']) == 0):
             return {'state' : self.trade['state']}
@@ -63,7 +62,8 @@ class Real(object):
     
     def load_trade_config(self):
         self.load_trade()
-        self.config = self.db[self.cols['configs']].find_one({"userId" : self.trade['userId']})    
+        self.config = self.db[self.cols['configs']].find_one({"userId" : self.trade['userId']})  
+        Real._logger.info('tradeId = {} load trade = {}, config = {}'.format(self.tradeId, self.trade, self.config))  
 
 
     def load_data(self):
@@ -80,6 +80,7 @@ class Real(object):
 
 
     def updateTrade(self, update):
+        Real._logger.info('update tradeId={} with update = {}'.format(self.tradeId, update))
         return self.db[self.cols['trades']].update_one({"_id" : ObjectId(self.tradeId)},{"$set" : update})
 
 

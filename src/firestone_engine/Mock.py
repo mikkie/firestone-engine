@@ -67,6 +67,7 @@ class Mock(Real):
         self.load_cookie()
         try:   
             response = requests.post('http://mncg.10jqka.com.cn/cgiwt/delegate/qryChengjiao',headers=self.__header)
+            Mock._logger.info('mock tradeId = {} htbh = {} query chengjiao, get response = {}'.format(self.tradeId, htbh, response.text))
             result = json.loads(response.text)
             if(result['errorcode'] == 0):
                 orders = result['result']['list']
@@ -91,6 +92,7 @@ class Mock(Real):
         }
         try:   
             response = requests.post('http://mncg.10jqka.com.cn/cgiwt/delegate/cancelDelegated/',data=postData,headers=self.__header)
+            Mock._logger.info('mock tradeId = {} htbh = {} cancel delegate get response = {}'.format(self.tradeId, htbh, response.text))
             result = json.loads(response.text)
             if(result['errorcode'] == 0):
                 return {'state' : Constants.STATE[1], 'result' : '合同[{}]已撤销'.format(htbh)}

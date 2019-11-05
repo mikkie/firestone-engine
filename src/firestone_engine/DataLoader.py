@@ -58,41 +58,47 @@ class DataLoader(object):
 
 
     def run(self):
-        if(len(self.code_list) == 0):
-            self.is_finsih_flag = True
-            return
-        if(self.is_mock):
-            self.run_mock()
-        else:
-            df = tushare.get_realtime_quotes(self.code_list)
-            json_list = json.loads(df.to_json(orient='records'))
-            print(json_list)
-            for json_data in json_list:
-                code = json_data['code']
-                if(code not in self.lastRows):
-                   self.lastRows[code] = None
-                if(self.lastRows[code] is None or self.lastRows[code]['time'] != json_data['time']):    
-                    json_data['real_time'] = datetime.now()
-                    self.db[json_data['code'] + '-' + self.today].insert(json_data)
-                    self.lastRows[code] = json_data
+        try:
+            if(len(self.code_list) == 0):
+                self.is_finsih_flag = True
+                return
+            if(self.is_mock):
+                self.run_mock()
+            else:
+                df = tushare.get_realtime_quotes(self.code_list)
+                json_list = json.loads(df.to_json(orient='records'))
+                print(json_list)
+                for json_data in json_list:
+                    code = json_data['code']
+                    if(code not in self.lastRows):
+                        self.lastRows[code] = None
+                    if(self.lastRows[code] is None or self.lastRows[code]['time'] != json_data['time']):    
+                        json_data['real_time'] = datetime.now()
+                        self.db[json_data['code'] + '-' + self.today].insert(json_data)
+                        self.lastRows[code] = json_data
+        except Exception as e:
+            DataLoader._logger.error(e)
 
 
     def run_mock(self):
-        if(not hasattr(self, 'mock_count')):
-            self.mock_count = 0
-            self.data = {}
-            if(self.date is None):
-                today = datetime.now()
-                self.date = '{}-{}-{}'.format(today.year,today.month,today.day)
-            for code in self.code_list:
-                self.data[code + '-' + self.date] = list(self.db[code + '-' + self.date].find()) 
-                self.lastRows[code] = None
-        for code in self.code_list: 
-            if self.mock_count < len(self.data[code + '-' + self.date]):
-                json_data = self.data[code + '-' + self.date][self.mock_count]
-                json_data['real_time'] = datetime.now()
-                if(self.lastRows[code] is None or self.lastRows[code]['time'] != json_data['time']):
-                    self.db[code + '-' + self.date + '-m'].insert(json_data)
-                    self.lastRows[code] = json_data    
-        self.mock_count += 1
+        try:
+            if(not hasattr(self, 'mock_count')):
+                self.mock_count = 0
+                self.data = {}
+                if(self.date is None):
+                    today = datetime.now()
+                    self.date = '{}-{}-{}'.format(today.year,today.month,today.day)
+                for code in self.code_list:
+                    self.data[code + '-' + self.date] = list(self.db[code + '-' + self.date].find()) 
+                    self.lastRows[code] = None
+            for code in self.code_list: 
+                if self.mock_count < len(self.data[code + '-' + self.date]):
+                    json_data = self.data[code + '-' + self.date][self.mock_count]
+                    json_data['real_time'] = datetime.now()
+                    if(self.lastRows[code] is None or self.lastRows[code]['time'] != json_data['time']):
+                        self.db[code + '-' + self.date + '-m'].insert(json_data)
+                        self.lastRows[code] = json_data    
+            self.mock_count += 1
+        except Exception as e:
+            DataLoader._logger.error(e)
 
