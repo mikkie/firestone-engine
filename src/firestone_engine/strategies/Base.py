@@ -25,5 +25,5 @@ class Base(object):
 
 
     def matchCondition(self):
-        logging.info('tardeId = {}, {}, the strategy {} match the condition, data = {}, index = {}'.format(self.trade['_id'], datetime.now(), __name__, self.data[-1], self.index))
+        Base._logger.info('tardeId = {}, {}, the strategy {} match the condition, data = {}, index = {}'.format(self.trade['_id'], datetime.now(), __name__, self.data[-1], self.index))
         return True
