@@ -57,8 +57,8 @@ db.mocktrades.insertMany([{
             "end" : "15:00"
         },
         "index_percent" : {
-            "low" : "-0.19",
-            "high" : "-0.19"
+            "low" : "-0.18",
+            "high" : "-0.18"
         },
         "percent" : {
             "low" : "0.0",
