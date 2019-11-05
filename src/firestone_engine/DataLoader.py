@@ -28,10 +28,11 @@ class DataLoader(object):
         self.code_list = self.get_code_list(code_list, date)
         end_date = today + timedelta(days = 1)
         end_date = '{}-{}-{}'.format(end_date.year,end_date.month,end_date.day)
-        self.scheduler.add_job(self.run,'cron',id="last_job", hour=hours[2],minute=minutes[2],second='*/3', end_date=end_date)
-        self.scheduler.add_job(self.run,'cron',hour=hours[0],minute=minutes[0],second='*/3', end_date=end_date)
-        self.scheduler.add_job(self.run,'cron',hour=hours[1],minute=minutes[1],second='*/3', end_date=end_date)
-
+        for i, hour in enumerate(hours):
+            if(i == len(hours) - 1):
+                self.scheduler.add_job(self.run,'cron',id="last_job",hour=hour,minute=minutes[i],second='*/3', end_date=end_date)
+            else:
+                self.scheduler.add_job(self.run,'cron',hour=hour,minute=minutes[i],second='*/3', end_date=end_date)
 
     def get_code_list(self, code_list, date):
         colls = list(self.db.list_collections())

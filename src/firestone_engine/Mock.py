@@ -88,7 +88,7 @@ class Mock(Real):
         self.load_cookie()                   
         postData = {
             'htbh' : htbh,
-            'wtrq' : wtrq,
+            'wtrq' : wtrq
         }
         try:   
             response = requests.post('http://mncg.10jqka.com.cn/cgiwt/delegate/cancelDelegated/',data=postData,headers=self.__header)

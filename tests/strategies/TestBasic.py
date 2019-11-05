@@ -27,7 +27,7 @@ class TestBasic(TestBase, unittest.TestCase):
 
 
     def runAssert(self):
-        self.assertEqual(self.temp_data[-1]['time'], '09:31:33')
+        self.assertEqual(self.temp_data[-1]['time'], '09:31:30')
 
 
 if __name__ == "__main__":
