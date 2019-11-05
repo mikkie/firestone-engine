@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
 from .Real import Real
 from .Mock import Mock
+from .NoTrade import NoTrade
 from .Constants import Constants
 
 class Trader(object):
@@ -26,7 +27,7 @@ class Trader(object):
             else:    
                 self.scheduler.add_job(self.run,'cron',hour=hour,minute=minutes[i],second='*/4', end_date=self.end_date)
         if(ignore_trade):
-            pass
+            self.handler = NoTrade(tradeId, date)
         else:
             if(self.is_mock):
                 self.handler = Mock(tradeId, date)
