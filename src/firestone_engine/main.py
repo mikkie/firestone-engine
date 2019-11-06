@@ -18,6 +18,7 @@ Note: This skeleton file can be safely removed if not needed!
 import ptvsd
 import argparse
 import sys
+import os
 import time
 import logging
 from logging.handlers import TimedRotatingFileHandler
@@ -32,7 +33,7 @@ __license__ = "mit"
 _logger = logging.getLogger(__name__)
 _handler = TimedRotatingFileHandler('logs/firestone.log', when='D', interval=1, backupCount=10 ,encoding='UTF-8')
 
-def get_data(codes, is_mock, date, hours, minutes):
+def get_data(codes, is_mock, mock_trade, date, hours, minutes):
     """get data from tushare
 
     Args:
@@ -42,9 +43,9 @@ def get_data(codes, is_mock, date, hours, minutes):
       data
     """
     if(hours is None):
-        data_loader = DataLoader(codes, is_mock=is_mock, date=date)
+        data_loader = DataLoader(codes, is_mock=is_mock, mock_trade=mock_trade, date=date)
     else:
-        data_loader = DataLoader(codes, is_mock=is_mock, date=date, hours=hours, minutes=minutes)  
+        data_loader = DataLoader(codes, is_mock=is_mock, mock_trade=mock_trade, date=date, hours=hours, minutes=minutes)  
     data_loader.start()
     try:
         while(not data_loader.is_finsih()):
@@ -72,7 +73,7 @@ def parse_args(args):
         version="firestone-engine {ver}".format(ver=__version__))
     parser.add_argument(
         dest="codes",
-        help="the stock codes, i.e. 300793 600213",
+        help="the stock codes, i.e. 300793 600213. IMPORTANT! 000000 means get codes from DB and ignore all codes",
         nargs='+',
         metavar="code")
     parser.add_argument(
@@ -108,11 +109,22 @@ def parse_args(args):
         nargs='+',
         metavar="minute")
     parser.add_argument(
+        "-t",
+        "--test",
+        dest="test",
+        help="set environment as test",
+        action="store_true")    
+    parser.add_argument(
         "-m",
         "--mock",
         dest="mock",
         help="use mock data",
         action="store_true")
+    parser.add_argument(
+        "--md",
+        dest="mock_trade",
+        help="trade is mock, used for load mock trade codes from DB when code = 000000",
+        action="store_true")    
     parser.add_argument(
         "--date",
         dest="date",
@@ -142,8 +154,12 @@ def main(args):
         print("start debug on port 5678")
         ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
         ptvsd.wait_for_attach()
+    if(args.test):
+        os.environ['FR_DB'] = 'firestone-test'
+    else:
+        os.environ['FR_DB'] = 'firestone'
     setup_logging(args.loglevel)
-    get_data(args.codes, args.mock, args.date, args.hours, args.minutes)
+    get_data(args.codes, args.mock, args.mock_trade, args.date, args.hours, args.minutes)
 
 
 def run():
