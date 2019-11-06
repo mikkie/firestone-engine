@@ -46,7 +46,7 @@ class DataLoader(object):
     def get_code_list(self, code_list):
         if(DataLoader._CODE_FROM_DB in code_list):
             self.load_codes_from_db = True
-            return []
+            return [DataLoader._CODE_FROM_DB]
         colls = list(self.data_db.list_collections())
         codes = []
         for code in code_list:
