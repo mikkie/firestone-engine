@@ -73,7 +73,7 @@ def parse_args(args):
         version="firestone-engine {ver}".format(ver=__version__))
     parser.add_argument(
         dest="codes",
-        help="the stock codes, i.e. 300793 600213. IMPORTANT! 000000 means get codes from DB and ignore all codes",
+        help="the stock codes, i.e. 300793 600213. IMPORTANT! 000000 means get codes from DB and ignore all other codes",
         nargs='+',
         metavar="code")
     parser.add_argument(
@@ -112,13 +112,13 @@ def parse_args(args):
         "-t",
         "--test",
         dest="test",
-        help="set environment as test",
+        help="set environment as test, the db will be firestone-test",
         action="store_true")    
     parser.add_argument(
         "-m",
         "--mock",
         dest="mock",
-        help="use mock data",
+        help="load mock data internal, i.e. load data from  000993-2019-10-30 to 000993-2019-10-30-m, most use with --date to assign history source data",
         action="store_true")
     parser.add_argument(
         "--md",
