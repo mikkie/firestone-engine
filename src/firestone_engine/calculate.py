@@ -105,13 +105,13 @@ def parse_args(args):
         "-t",
         "--test",
         dest="test",
-        help="set environment as test",
+        help="set environment as test, the db will be firestone-test",
         action="store_true")
     parser.add_argument(
         "-i"
         "--ignoreTrade",
         dest="ignore_trade",
-        help="ignore trade part",
+        help="ignore trade part, no trade will happen",
         action="store_true")    
     parser.add_argument(
         "--date",
