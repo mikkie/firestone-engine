@@ -81,18 +81,22 @@ class DataLoader(object):
             colname = 'mocktrades'
         codes_data = self.db[colname].find({"deleted":False, "createDate" : {"$gte": self.today_datetime}},{"code" : 1, "_id" : 0})
         code_list = [code_data["code"] for code_data in list(codes_data)]
-        if('000001' not in code_list):
-            code_list.append('000001')
-        if('399006' not in code_list):
-            code_list.append(code_list)
-        return code_list    
+        for code in code_list:
+            if(code.startswith('3')):
+                if('399006' not in code_list):
+                    code_list.append('399006')
+            else:  
+                if('000001' not in code_list):
+                    code_list.append('000001')
+        return list(set(code_list)) 
 
 
     def run(self):
         try:
             if(self.load_codes_from_db):
                 self.code_list = self.get_code_list_from_db()
-            if(len(self.code_list) < 3):
+            DataLoader._logger.info('start get the data for {}'.format(self.code_list))
+            if(len(self.code_list) < 2):
                 return    
             if(self.is_mock):
                 self.run_mock()
