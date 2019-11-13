@@ -22,6 +22,7 @@ pipenv sync
 (2) install new dependency
 
 pipenv install xxx
+pipenv install xxx --dev
 
 (3) run dev
 
