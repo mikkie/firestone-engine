@@ -5,6 +5,7 @@ import json
 import os
 from pymongo import MongoClient
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 
 class DataLoader(object):
 
@@ -39,9 +40,10 @@ class DataLoader(object):
         self.code_list = self.get_code_list(code_list)
         for i, hour in enumerate(hours):
             if(i == len(hours) - 1):
-                self.scheduler.add_job(self.run,'cron',id="last_job",hour=hour,minute=minutes[i],second='*/3', end_date=end_date)
+                trigger = CronTrigger(hour=hour,minute=minutes[i],second='*/3', end_date=end_date)
+                self.scheduler.add_job(self.run,id="last_job",trigger=trigger)
             else:
-                self.scheduler.add_job(self.run,'cron',hour=hour,minute=minutes[i],second='*/3', end_date=end_date)
+                self.scheduler.add_job(self.run,trigger=trigger)
 
     def get_code_list(self, code_list):
         if(DataLoader._CODE_FROM_DB in code_list):
@@ -67,7 +69,7 @@ class DataLoader(object):
 
     def is_finsih(self):
         job = self.scheduler.get_job('last_job')
-        return job is None or job.next_run_time is None or self.is_finsih_flag
+        return self.is_finsih_flag or job is None or job.next_run_time is None
 
     def stop(self):
         self.client.close()

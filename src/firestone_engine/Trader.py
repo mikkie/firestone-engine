@@ -3,6 +3,7 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 from datetime import datetime, timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.cron import CronTrigger
 from .Real import Real
 from .Mock import Mock
 from .NoTrade import NoTrade
@@ -22,10 +23,11 @@ class Trader(object):
         end_date = datetime.now() + timedelta(days = 1)
         self.end_date = '{}-{}-{}'.format(end_date.year,end_date.month,end_date.day)
         for i, hour in enumerate(hours):
+            trigger = CronTrigger(hour=hour,minute=minutes[i],second='*/4', end_date=self.end_date)
             if(i == len(hours) - 1):
-                self.scheduler.add_job(self.run,'cron',id="last_job", hour=hour,minute=minutes[i],second='*/4', end_date=self.end_date)
+                self.scheduler.add_job(self.run,id="last_job", trigger=trigger)
             else:    
-                self.scheduler.add_job(self.run,'cron',hour=hour,minute=minutes[i],second='*/4', end_date=self.end_date)
+                self.scheduler.add_job(self.run,trigger=trigger)
         if(ignore_trade):
             self.handler = NoTrade(tradeId, date)
         else:
@@ -47,7 +49,8 @@ class Trader(object):
             if(result['state'] == Constants.STATE[2] and 'htbh' in result):
                 htbh = result['htbh']
                 for i, hour in enumerate(self.hours):
-                    self.scheduler.add_job(self.check_chengjiao,'cron',kwargs={'htbh' : htbh},hour=hour,minute=self.minutes[i],second='*/10', end_date=self.end_date)
+                    trigger = CronTrigger(hour=hour,minute=self.minutes[i],second='*/10', end_date=self.end_date)
+                    self.scheduler.add_job(self.check_chengjiao,kwargs={'htbh' : htbh}, trigger=trigger)
             #done
             elif (result['state'] == Constants.STATE[4]):
                 self.is_finsih_flag = True
@@ -67,7 +70,7 @@ class Trader(object):
 
     def is_finsih(self):
         job = self.scheduler.get_job('last_job')
-        return job is None or job.next_run_time is None or self.is_finsih_flag
+        return self.is_finsih_flag or job is None or job.next_run_time is None
 
     def stop(self):
         self.handler.updateTrade({'state' : Constants.STATE[4]})

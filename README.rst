@@ -56,6 +56,26 @@ Test
 
 tests\runTest.bat
 
+Publish
+=======
+
+pipenv install pyinstaller --dev
+pipenv shell
+pyinstaller -F src/firestone_engine/main.py   (first time)
+pyinstaller -F --clean main.spec    (second time)
+pyinstaller -F src/firestone_engine/calculate.py   (first time)
+pyinstaller -F --clean calculate.spec    (second time)
+
+
+for no module ptvsd error
+    comment out the ptvsd in main and calculate
+
+for no module distutils error(modify the hook in pyinstaller):
+    https://github.com/pyinstaller/pyinstaller/issues/4064
+
+for dynamic load strategies, i.e. Base.py, Basic.py need to import into Real.py
+
+
 Note
 ====
 
