@@ -15,7 +15,7 @@ also be used as template for Python modules.
 Note: This skeleton file can be safely removed if not needed!
 """
 
-import ptvsd
+# import ptvsd
 import argparse
 import sys
 import os
@@ -149,11 +149,11 @@ def main(args):
       args ([str]): command line parameter list
     """
     args = parse_args(args)
-    if(args.debug):
-        # 5678 is the default attach port in the VS Code debug configurations
-        print("start debug on port 5678")
-        ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
-        ptvsd.wait_for_attach()
+    # if(args.debug):
+    #     # 5678 is the default attach port in the VS Code debug configurations
+    #     print("start debug on port 5678")
+    #     ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
+    #     ptvsd.wait_for_attach()
     if(args.test):
         os.environ['FR_DB'] = 'firestone-test'
     else:
