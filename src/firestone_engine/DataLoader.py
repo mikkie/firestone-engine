@@ -39,8 +39,8 @@ class DataLoader(object):
         self.load_codes_from_db = False
         self.code_list = self.get_code_list(code_list)
         for i, hour in enumerate(hours):
+            trigger = CronTrigger(hour=hour,minute=minutes[i],second='*/3', end_date=end_date)
             if(i == len(hours) - 1):
-                trigger = CronTrigger(hour=hour,minute=minutes[i],second='*/3', end_date=end_date)
                 self.scheduler.add_job(self.run,id="last_job",trigger=trigger)
             else:
                 self.scheduler.add_job(self.run,trigger=trigger)
