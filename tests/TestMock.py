@@ -75,6 +75,11 @@ class TestMock(unittest.TestCase):
     #     self.assertEqual(result['state'],'暂停')
     #     print(result['result'])
 
+    # def testRelogin(self):
+    #     result = self.mock.reLogin()
+    #     self.assertEqual(len(result),0)
+    #     print(result)
+
 
     def tearDown(self):
         self.mock.close()
@@ -84,9 +89,9 @@ class TestMock(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 
-# # to debug in vscode uncomment this block
-# import ptvsd
-# # 5678 is the default attach port in the VS Code debug configurations
-# print("start debug on port 5678")
-# ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
-# ptvsd.wait_for_attach()
+# to debug in vscode uncomment this block
+import ptvsd
+# 5678 is the default attach port in the VS Code debug configurations
+print("start debug on port 5678")
+ptvsd.enable_attach(address=('localhost', 5678), redirect_output=True)
+ptvsd.wait_for_attach()

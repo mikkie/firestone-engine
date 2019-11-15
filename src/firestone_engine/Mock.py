@@ -99,4 +99,17 @@ class Mock(Real):
             return {'state' : Constants.STATE[3], 'result' : result['errormsg']}
         except Exception as e:
                 Mock._logger.error('can deligate [{}] faield, e = {}'.format(htbh, e))
-                return {'state' : Constants.STATE[3], 'result' : '合同[{}]撤销失败，请检查配置'.format(htbh)}   
+                return {'state' : Constants.STATE[3], 'result' : '合同[{}]撤销失败，请检查配置'.format(htbh)} 
+
+
+    def reLogin(self):
+        try:   
+            response = requests.get('http://mncg.10jqka.com.cn/cgiwt/login/doths/?type=auto&uname={}&password='.format(self.config['username']),headers=self.__header)
+            Mock._logger.info('mock tradeId = {} reLogin get response = {}'.format(self.tradeId, response.text))
+            result = json.loads(response.text)
+            if(result['errorcode'] == 0):
+                return {}
+            return {'state' : Constants.STATE[3], 'result' : result['errormsg']}    
+        except Exception as e:
+            Mock._logger.error('mock tradeId = {} faield, e = {}'.format(self.tradeId, e))
+            return {'state' : Constants.STATE[3], 'result' : '登录失败'} 

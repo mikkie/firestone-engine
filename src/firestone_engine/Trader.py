@@ -35,11 +35,23 @@ class Trader(object):
                 self.handler = Mock(tradeId, date)
             else:
                 self.handler = Real(tradeId, date)  
+            self.add_heart_beat()
 
 
     def start(self):
         self.scheduler.start()
         Trader._logger.info('job execute trade for {} is start'.format(self.tradeId))
+
+
+
+    def add_heart_beat(self):
+        for hour in self.hours:
+            trigger = CronTrigger(hour=hour,minute='*/10', end_date=self.end_date)
+            self.scheduler.add_job(self.send_heart_beat,trigger=trigger)
+
+
+    def send_heart_beat(self):
+        self.handler.reLogin()
 
 
     def run(self):

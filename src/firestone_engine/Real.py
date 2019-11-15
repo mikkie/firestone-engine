@@ -117,6 +117,9 @@ class Real(object):
         return {'errorcode' : -1, 'message' : 'not allowed', 'state' : Constants.STATE[3]}  
 
 
+    def reLogin(self):
+        return {'errorcode' : -1, 'message' : 'not allowed', 'state' : Constants.STATE[3]}    
+
 
     def check_chengjiao(self, htbh):
         update = self.queryChenjiao(htbh)
