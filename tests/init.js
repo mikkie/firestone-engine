@@ -33,7 +33,8 @@ db.strategies.insertMany([{
         "percent" : {
             "low" : "-0.5",
             "high" : "2.5"
-        }
+        },
+        "volume" : 100
     }
 },{
     "name" : "打板策略",
