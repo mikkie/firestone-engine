@@ -30,14 +30,17 @@ class ProxyManager(object):
             self.load_proxy_failed += 1
 
 
+    def get_pool_size(self):
+        return len(self.proxy_pool)
+
+
     def get_proxy(self):
         if(self.proxy is not None):
             self.proxy_pool.append(self.proxy)
-        length = len(self.proxy_pool)
-        if(length == 0):
+        if(self.get_pool_size() == 0):
             if(self.load_proxy_failed < ProxyManager._LOAD_PROXY_RETRY):
                 self.load_proxies()
-            if(len(self.proxy_pool) == 0):
+            if(self.get_pool_size() == 0):
                 return None
         self.proxy = self.proxy_pool.pop(0)
         return "{}:{}".format(self.proxy['ip'], self.proxy['port'])

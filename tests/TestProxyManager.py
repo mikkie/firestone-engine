@@ -8,8 +8,16 @@ class TestProxyManager(unittest.TestCase):
         self.proxyManager = ProxyManager()
 
     def test_get_proxy(self):
-        for i in range(0, 12):
-            print(self.proxyManager.get_proxy())
+        proxy_list = []
+        self.proxyManager.get_proxy()
+        self.assertGreater(self.proxyManager.get_pool_size(), 0)
+        i = 0
+        while i <= self.proxyManager.get_pool_size():
+            proxy = self.proxyManager.get_proxy()
+            proxy_list.append(proxy)
+            print(proxy)
+            i += 1
+        self.assertEqual(proxy_list[0], proxy_list[len(proxy_list) - 1]) 
 
 
 if __name__ == "__main__":
