@@ -73,6 +73,9 @@ for no module ptvsd error
 for no module distutils error(modify the hook in pyinstaller):
     https://github.com/pyinstaller/pyinstaller/issues/4064
 
+    if distutils_dir.endswith('__init__.py'):
+            distutils_dir = os.path.dirname(distutils_dir)
+
 for dynamic load strategies, i.e. Base.py, Basic.py need to import into Real.py
 
 
