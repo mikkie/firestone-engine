@@ -12,7 +12,7 @@ class TestProxyManager(unittest.TestCase):
         self.proxyManager.get_proxy()
         self.assertGreater(self.proxyManager.get_pool_size(), 0)
         i = 0
-        while i <= self.proxyManager.get_pool_size():
+        while i <= self.proxyManager.get_pool_size() + 1:
             proxy = self.proxyManager.get_proxy()
             proxy_list.append(proxy)
             print(proxy)
