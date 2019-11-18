@@ -6,6 +6,7 @@ import os
 from pymongo import MongoClient
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
+from .ProxyManager import ProxyManager
 
 class DataLoader(object):
 
@@ -18,6 +19,8 @@ class DataLoader(object):
     _CODE_FROM_DB = '000000'
 
     def __init__(self, code_list, is_mock=False, mock_trade=False, date=None, hours=['9','11','10,13-14'], minutes=['30-59','0-29','*']):
+        self.proxyManager = ProxyManager()
+        self.use_proxy = False
         self.hours = hours
         self.minutes = minutes
         self.is_mock = is_mock
@@ -93,6 +96,19 @@ class DataLoader(object):
         return list(set(code_list)) 
 
 
+    def load_data(self):
+        try:
+            if(self.use_proxy):
+                return tushare.get_realtime_quotes(self.code_list, proxyManager=self.proxyManager)
+            else:
+                return tushare.get_realtime_quotes(self.code_list)
+        except Exception as e:
+            DataLoader._logger.error('load data error, use_proxy = {}, e = {}'.format(self.use_proxy, e))
+            self.use_proxy = True
+            self.proxyManager.remove_proxy()
+
+
+
     def run(self):
         try:
             if(self.load_codes_from_db):
@@ -103,7 +119,7 @@ class DataLoader(object):
             if(self.is_mock):
                 self.run_mock()
             else:
-                df = tushare.get_realtime_quotes(self.code_list)
+                df = self.load_data()
                 json_list = json.loads(df.to_json(orient='records'))
                 print(json_list)
                 for json_data in json_list:
