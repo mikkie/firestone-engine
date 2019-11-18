@@ -84,3 +84,13 @@ information on PyScaffold see https://pyscaffold.org/.
 
 For install vs develop:
 http://www.siafoo.net/article/77#install-vs-develop
+
+Edit trading.py and add the following
+=====================================
+
+def get_realtime_quotes(symbols=None, proxyManager=None):
+
+if(proxyManager is not None):
+        proxy = proxyManager.get_proxy()
+        if(proxy is not None):
+            request.set_proxy(proxy, 'http')
