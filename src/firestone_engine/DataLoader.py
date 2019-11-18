@@ -1,5 +1,6 @@
 import tushare
 from datetime import datetime, timedelta
+import pytz
 import logging
 import json
 import os
@@ -9,6 +10,8 @@ from apscheduler.triggers.cron import CronTrigger
 from .ProxyManager import ProxyManager
 
 class DataLoader(object):
+
+    UTC_8 = pytz.timezone('Asia/Shanghai')
 
     _logger = logging.getLogger(__name__)
 
@@ -34,7 +37,7 @@ class DataLoader(object):
         self.date = date
         today = datetime.now()
         self.today = '{}-{}-{}'.format(today.year,today.month,today.day)
-        self.today_datetime = datetime(today.year,today.month,today.day)
+        self.today_datetime = datetime(today.year,today.month,today.day,tzinfo=DataLoader.UTC_8)
         if(self.date is None):
             self.date = self.today
         end_date = today + timedelta(days = 1)
