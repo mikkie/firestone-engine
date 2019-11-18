@@ -6,8 +6,6 @@ class TestProxyManager(unittest.TestCase):
     
     def setUp(self):
         self.proxyManager = ProxyManager()
-        self.assertEqual(len(self.proxyManager.proxy_pool), 10)
-
 
     def test_get_proxy(self):
         for i in range(0, 12):

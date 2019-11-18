@@ -6,7 +6,7 @@ class ProxyManager(object):
 
     _URL = 'http://http.tiqu.alicdns.com/getip3?num={}&type=2&pro=&city=0&yys=100017&port=1&time=4&ts=1&ys=1&cs=1&lb=1&sb=0&pb=4&mr=1&regions=&gm=4'
 
-    _LOAD_PROXY_RETRY = 5
+    _LOAD_PROXY_RETRY = 10
     
     _logger = logging.getLogger(__name__)
 
@@ -14,10 +14,8 @@ class ProxyManager(object):
         self.proxy_pool = []
         self.load_proxy_failed = 0
         self.proxy = None
-        self.load_proxies()
 
-
-    def load_proxies(self, number=10):
+    def load_proxies(self, number=5):
         try:
             response = requests.get(ProxyManager._URL.format(number))
             ProxyManager._logger.info('load proxies, retry = {} get response = {}'.format(self.load_proxy_failed, response.text))
