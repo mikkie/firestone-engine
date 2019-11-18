@@ -109,6 +109,7 @@ class DataLoader(object):
             DataLoader._logger.error('load data error, use_proxy = {}, e = {}'.format(self.use_proxy, e))
             self.use_proxy = True
             self.proxyManager.remove_proxy()
+            return None
 
 
 
@@ -123,6 +124,9 @@ class DataLoader(object):
                 self.run_mock()
             else:
                 df = self.load_data()
+                if(df is None):
+                    DataLoader._logger.error('failed to get the data for {}'.format(self.code_list))
+                    return      
                 json_list = json.loads(df.to_json(orient='records'))
                 print(json_list)
                 for json_data in json_list:
