@@ -20,7 +20,7 @@ class ProxyManager(object):
     def load_proxies(self, number=10):
         try:
             response = requests.get(ProxyManager._URL.format(number))
-            ProxyManager._logger.info('load proxies get response = {}'.format(response.text))
+            ProxyManager._logger.info('load proxies, retry = {} get response = {}'.format(self.load_proxy_failed, response.text))
             result = json.loads(response.text)
             if(result['code'] == 0):
                 self.proxy_pool.extend(result['data'])
