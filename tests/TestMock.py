@@ -54,6 +54,12 @@ class TestMock(unittest.TestCase):
         self.assertEqual(self.mock.trade['order']['result']['data']['htbh'], '1249578371')
 
 
+    def testUpdateConfig(self):
+        self.mock.updateConfig({ '$inc': { 'curBuyNum': 1 } })
+        self.mock.load_trade_config()
+        self.assertEqual(self.mock.config['curBuyNum'], 1)
+
+
 
     # def testCreateOrder(self):
     #     result = self.mock.createDelegate('000793', 2.74, 100, 'buy')

@@ -40,6 +40,10 @@ class Real(object):
     def run(self):
         self.load_trade_config()
         self.load_data()
+        if(self.config['curBuyNum'] >= self.config['maxBuyNum']):
+            force_state = {'state' : Constants.STATE[4]}
+            self.updateTrade(force_state)
+            return force_state
         if(len(self.data['data']) == 0):
             return {'state' : self.trade['state']}
         if(self.trade['state'] == Constants.STATE[5]):
@@ -86,6 +90,11 @@ class Real(object):
         return self.db[self.cols['trades']].update_one({"_id" : ObjectId(self.tradeId)},{"$set" : update})
 
 
+    def updateConfig(self, update):
+        Real._logger.info('update configId={} with update = {}'.format(self.config['_id'], update))
+        return self.db[self.cols['configs']].update_one({"_id" : self.config['_id']}, update)
+
+
     def createOrder(self):
         code = self.trade['params']['code']
         price = float(self.data['data'][-1]['price'])
@@ -125,7 +134,9 @@ class Real(object):
         update = self.queryChenjiao(htbh)
         if(len(update) == 0):
             return
-        self.updateTrade(update)  
+        self.updateTrade(update)
+        if(update['state'] == Constants.STATE[4]):
+            self.updateConfig({ '$inc': { 'curBuyNum': 1 } })
 
 
     def queryChenjiao(self, htbh):
