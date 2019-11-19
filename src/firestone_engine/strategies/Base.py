@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from firestone_engine.Utils import Utils
 
 class Base(object):
 
@@ -27,3 +28,22 @@ class Base(object):
     def matchCondition(self):
         Base._logger.info('tardeId = {}, {}, the strategy {} match the condition, data = {}, index = {}'.format(self.trade['_id'], datetime.now(), self.__class__, self.data[-1], self.index))
         return True
+
+
+    def get_percent(self, row):
+        price = float(row['price'])
+        pre_close = float(row['pre_close'])
+        return Utils.round_dec((price - pre_close) / pre_close * 100)
+
+
+    def get_current_data_percent(self):
+        return self.get_percent(self.dataLastRow)
+
+    def get_current_index_percent(self):
+        return self.get_percent(self.indexLastRow)
+
+
+    def get_data_length(self):
+        return len(self.data)
+
+    
