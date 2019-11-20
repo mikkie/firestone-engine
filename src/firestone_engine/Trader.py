@@ -51,7 +51,7 @@ class Trader(object):
 
 
     def send_heart_beat(self):
-        self.handler.reLogin()
+        self.handler.heart_beat()
 
 
     def run(self):

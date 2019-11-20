@@ -106,7 +106,7 @@ class Real(object):
 
 
     def createDelegate(self, code, price, volume, op):
-        return {'errorcode' : -1, 'message' : 'not allowed', 'state' : Constants.STATE[3]}
+        return {'result' : 'not allowed', 'state' : Constants.STATE[3]}
 
 
     def cancelOrder(self):
@@ -124,11 +124,18 @@ class Real(object):
 
 
     def cancelDelegate(self, htbh, wtrq):
-        return {'errorcode' : -1, 'message' : 'not allowed', 'state' : Constants.STATE[3]}  
+        return {'result' : 'not allowed', 'state' : Constants.STATE[3]}  
 
 
     def reLogin(self):
-        return {'errorcode' : -1, 'message' : 'not allowed', 'state' : Constants.STATE[3]}    
+        return {'result' : 'not allowed', 'state' : Constants.STATE[3]}  
+
+
+    def heart_beat(self):
+        update = self.reLogin()
+        if(len(update) == 0):
+            return
+        self.updateTrade(update)
 
 
     def check_chengjiao(self, htbh):
@@ -141,7 +148,7 @@ class Real(object):
 
 
     def queryChenjiao(self, htbh):
-        return {'errorcode' : -1, 'message' : 'not allowed', 'state' : Constants.STATE[3]}
+        return {'result' : 'not allowed', 'state' : Constants.STATE[3]}
 
 
     
