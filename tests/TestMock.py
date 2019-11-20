@@ -70,14 +70,14 @@ class TestMock(unittest.TestCase):
     #     self.assertEqual(result['state'], '已提交')
     #     print(result['result'])
 
-    def testCreateOrder1(self):
-        for i in range(0, 12):
-            result = self.mock.reLogin()
-            print(result)
-            time.sleep(600)
-        result = self.mock.createDelegate('300017', 8.96, 100, 'buy')
-        self.assertEqual(result['state'], '已提交')
-        print(result['result'])
+    # def testCreateOrder1(self):
+    #     for i in range(0, 12):
+    #         result = self.mock.reLogin()
+    #         print(result)
+    #         time.sleep(600)
+    #     result = self.mock.createDelegate('300017', 8.96, 100, 'buy')
+    #     self.assertEqual(result['state'], '已提交')
+    #     print(result['result'])
 
 
     # def testQueryChengjiao(self):
@@ -91,10 +91,10 @@ class TestMock(unittest.TestCase):
     #     self.assertEqual(result['state'],'暂停')
     #     print(result['result'])
 
-    # def testRelogin(self):
-    #     result = self.mock.reLogin()
-    #     self.assertEqual(len(result),0)
-    #     print(result)
+    def testRelogin(self):
+        result = self.mock.reLogin()
+        self.assertEqual(len(result),0)
+        print(result)
 
 
     def tearDown(self):

@@ -132,7 +132,7 @@ class Real(object):
 
 
     def heart_beat(self):
-        update = self.reLogin()
+        update = self.queryChenjiao('heart_beat')
         if(len(update) == 0):
             return
         self.updateTrade(update)
