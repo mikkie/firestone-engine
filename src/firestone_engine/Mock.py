@@ -103,6 +103,7 @@ class Mock(Real):
 
 
     def reLogin(self):
+        self.load_cookie()
         try:   
             response = requests.get('http://mncg.10jqka.com.cn/cgiwt/login/doths/?type=auto&uname={}&password='.format(self.config['username']),headers=self.__header)
             Mock._logger.info('mock tradeId = {} reLogin get response = {}'.format(self.tradeId, response.text))
