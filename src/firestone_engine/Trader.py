@@ -45,9 +45,8 @@ class Trader(object):
 
 
     def add_heart_beat(self):
-        for hour in self.hours:
-            trigger = CronTrigger(hour=hour,minute='*/10', end_date=self.end_date)
-            self.scheduler.add_job(self.send_heart_beat,trigger=trigger)
+        trigger = CronTrigger(hour='*',minute='*/10', end_date=self.end_date)
+        self.scheduler.add_job(self.send_heart_beat,trigger=trigger)
 
 
     def send_heart_beat(self):
