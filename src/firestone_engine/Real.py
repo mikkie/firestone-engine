@@ -131,13 +131,6 @@ class Real(object):
         return {'result' : 'not allowed', 'state' : Constants.STATE[3]}  
 
 
-    def heart_beat(self):
-        update = self.queryChenjiao('heart_beat')
-        if(len(update) == 0):
-            return
-        self.updateTrade(update)
-
-
     def check_chengjiao(self, htbh):
         update = self.queryChenjiao(htbh)
         if(len(update) == 0):
