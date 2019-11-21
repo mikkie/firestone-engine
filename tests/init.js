@@ -60,7 +60,7 @@ db.strategies.insertMany([{
         "speed" : {
             "time" : "3.1",
             "percent" : "1.48",
-            "volume" : "50"
+            "amount" : "50"
         },
         "volume" : 100
     }
@@ -208,7 +208,7 @@ db.mocktrades.insertMany([{
         "speed" : {
             "time" : "3.1",
             "percent" : "1.48",
-            "volume" : "97"
+            "amount" : "97"
         },
         "volume" : 100
     }

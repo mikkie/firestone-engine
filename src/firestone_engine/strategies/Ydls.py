@@ -18,11 +18,11 @@ class Ydls(Basic):
             return False
         time = float(self.trade['params']['speed']['time'])
         percent = float(self.trade['params']['speed']['percent'])
-        volume = float(self.trade['params']['speed']['volume']) * 10000
+        amount = float(self.trade['params']['speed']['amount']) * 10000
         index = int(20 * time)
         index = index * -1 if length >= index else length * -1
         pre_percent = self.get_percent(self.data[index])
         cur_percent = self.get_current_data_percent()
         pre_amount = float(self.data[index]['amount'])
         cur_amount = float(self.dataLastRow['amount'])
-        return cur_percent - pre_percent >= percent and cur_amount - pre_amount >= volume
+        return cur_percent - pre_percent >= percent and cur_amount - pre_amount >= amount
