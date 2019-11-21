@@ -49,7 +49,7 @@ class Trader(object):
             if(result['state'] == Constants.STATE[2] and 'htbh' in result):
                 htbh = result['htbh']
                 for i, hour in enumerate(self.hours):
-                    trigger = CronTrigger(hour=hour,minute=self.minutes[i],second='*/10', end_date=self.end_date)
+                    trigger = CronTrigger(hour=hour,minute=self.minutes[i],second='*/30', end_date=self.end_date)
                     self.scheduler.add_job(self.check_chengjiao,kwargs={'htbh' : htbh}, trigger=trigger)
             #done
             elif (result['state'] == Constants.STATE[4]):
