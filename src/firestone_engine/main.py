@@ -118,7 +118,7 @@ def parse_args(args):
         "-m",
         "--mock",
         dest="mock",
-        help="load mock data internal, i.e. load data from  000993-2019-10-30 to 000993-2019-10-30-m, most use with --date to assign history source data",
+        help="load mock data internal, use with -t to do the test, i.e. load data from  000993-2019-10-30 to 000993-2019-10-30-m, most use with --date to assign history source data",
         action="store_true")
     parser.add_argument(
         "--md",
