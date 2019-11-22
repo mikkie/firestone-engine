@@ -8,6 +8,7 @@ from pymongo import MongoClient
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from .ProxyManager import ProxyManager
+from .Constants import Constants
 
 class DataLoader(object):
 
@@ -91,11 +92,11 @@ class DataLoader(object):
         code_list = [code_data["code"] for code_data in list(codes_data)]
         for code in code_list:
             if(code.startswith('3')):
-                if('399006' not in code_list):
-                    code_list.append('399006')
+                if(Constants.INDEX[5] not in code_list):
+                    code_list.append(Constants.INDEX[5])
             else:  
-                if('000001' not in code_list):
-                    code_list.append('000001')
+                if(Constants.INDEX[0] not in code_list):
+                    code_list.append(Constants.INDEX[0])
         return list(set(code_list)) 
 
 
@@ -131,11 +132,12 @@ class DataLoader(object):
                 print(json_list)
                 for json_data in json_list:
                     code = json_data['code']
+                    code = Constants.map_code(json_data['name'], json_data['code'])
                     if(code not in self.lastRows):
                         self.lastRows[code] = None
                     if(self.lastRows[code] is None or self.lastRows[code]['time'] != json_data['time']):    
                         json_data['real_time'] = datetime.now()
-                        self.data_db[json_data['code'] + '-' + self.today].insert(json_data)
+                        self.data_db[code + '-' + self.today].insert(json_data)
                         self.lastRows[code] = json_data
         except Exception as e:
             DataLoader._logger.error(e)
