@@ -10,7 +10,7 @@ class TestBasic(TestBase, unittest.TestCase):
             'tradeId' : '5da1800e87b64fb6f4c32503',
             'configId' : '5db796e4429e4baab72826a0',
             'data_col' : '000993-2019-10-30',
-            'index_col' : '000001-2019-10-30'
+            'index_col' : 'sh-2019-10-30'
         }    
 
 

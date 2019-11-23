@@ -10,7 +10,7 @@ class TestYdls(TestBasic, unittest.TestCase):
             'tradeId' : '5db7e0a555609bb27252edb5',
             'configId' : '5db796e4429e4baab72826a0',
             'data_col' : '300713-2019-10-30',
-            'index_col' : '000001-2019-10-30'
+            'index_col' : 'sh-2019-10-30'
         }    
 
 
