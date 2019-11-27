@@ -136,7 +136,7 @@ class Real(object):
         if(len(update) == 0):
             return
         self.updateTrade(update)
-        if(update['state'] == Constants.STATE[4]):
+        if(update['state'] == Constants.STATE[4] and self.strategyMeta['op'] == 'buy'):
             self.updateConfig({ '$inc': { 'curBuyNum': 1 } })
 
 
