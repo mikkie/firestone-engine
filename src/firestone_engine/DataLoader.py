@@ -38,7 +38,7 @@ class DataLoader(object):
         self.date = date
         today = datetime.now()
         self.today = '{}-{}-{}'.format(today.year,today.month,today.day)
-        self.today_datetime = datetime(today.year,today.month,today.day,tzinfo=DataLoader.UTC_8)
+        # self.today_datetime = datetime(today.year,today.month,today.day,tzinfo=DataLoader.UTC_8)
         if(self.date is None):
             self.date = self.today
         end_date = today + timedelta(days = 1)
@@ -88,7 +88,7 @@ class DataLoader(object):
         colname = 'trades'
         if(self.mock_trade):
             colname = 'mocktrades'
-        codes_data = self.db[colname].find({"deleted":False, "createDate" : {"$gte": self.today_datetime}},{"code" : 1, "_id" : 0})
+        codes_data = self.db[colname].find({"deleted":False, "params.executeDate" : self.today},{"code" : 1, "_id" : 0})
         code_list = [code_data["code"] for code_data in list(codes_data)]
         for code in code_list:
             if(code.startswith('3')):

@@ -1,3 +1,5 @@
+var now = new Date();
+var todayStr = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
 db.createCollection('users');
 db.users.insert({
    username: "aqua",
@@ -23,6 +25,7 @@ db.strategies.insertMany([{
     "url" : "Basic",
     "parameters" : {
         "code" : "",
+        "executeDate" : "",
         "monitorTime" : {
             "start" : "09:30",
             "end" : "15:00"
@@ -45,6 +48,7 @@ db.strategies.insertMany([{
     "url" : "Ydls",
     "parameters" : {
         "code" : "",
+        "executeDate" : "",
         "monitorTime" : {
             "start" : "09:30",
             "end" : "15:00"
@@ -75,6 +79,7 @@ db.mocktrades.insertMany([{
     "deleted" : false,
     "params" : {
         "code" : "300691",
+        "executeDate" : "2023-09-15",
         "monitorTime" : {
             "start" : "09:30",
             "end" : "15:00"
@@ -99,6 +104,7 @@ db.mocktrades.insertMany([{
     "deleted" : false,
     "params" : {
         "code" : "000993",
+        "executeDate" : todayStr,
         "monitorTime" : {
             "start" : "09:30",
             "end" : "15:00"
@@ -122,6 +128,7 @@ db.mocktrades.insertMany([{
     "deleted" : false,
     "params" : {
         "code" : "300693",
+        "executeDate" : "2019-11-26",
         "monitorTime" : {
             "start" : "09:30",
             "end" : "15:00"
@@ -145,6 +152,7 @@ db.mocktrades.insertMany([{
     "deleted" : false,
     "params" : {
         "code" : "300694",
+        "executeDate" : todayStr,
         "monitorTime" : {
             "start" : "09:30",
             "end" : "15:00"
@@ -169,6 +177,7 @@ db.mocktrades.insertMany([{
     "deleted" : false,
     "params" : {
         "code" : "000793",
+        "executeDate" : todayStr,
         "monitorTime" : {
             "start" : "09:31",
             "end" : "09:32"
@@ -190,9 +199,11 @@ db.mocktrades.insertMany([{
     "result" : "无",
     "userId" : ObjectId("5d905db9fc84d3224b0eb59c"),
     "strategyId" : ObjectId("5da19b7d181fc3600c5544c3"),
+    "createDate" : ISODate("2019-09-15T00:00:00.000Z"),
     "deleted" : false,
     "params" : {
         "code" : "300713",
+        "executeDate" : "2019-11-26",
         "monitorTime" : {
             "start" : "09:30",
             "end" : "15:00"

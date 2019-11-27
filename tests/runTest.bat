@@ -3,5 +3,5 @@ mongo 127.0.0.1/firestone-test --eval "db.dropDatabase(); db.getSiblingDB('fires
 REM mongo 127.0.0.1/firestone-data "c:/aqua/firestone-engine/tests/initData.js"
 REM pipenv run python -m unittest tests/strategies/TestBasic.py
 REM pipenv run python -m unittest tests/strategies/TestYdls.py
-pipenv run python -m unittest tests/TestMock.py
-REM pipenv run python -m unittest tests/TestDataloader.py
+REM pipenv run python -m unittest tests/TestMock.py
+pipenv run python -m unittest tests/TestDataloader.py

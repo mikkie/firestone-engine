@@ -23,6 +23,7 @@ db.strategies.insertMany([{
     "url" : "Basic",
     "parameters" : {
         "code" : "",
+        "executeDate" : "",
         "monitorTime" : {
             "start" : "09:30",
             "end" : "15:00"
@@ -55,6 +56,7 @@ db.mocktrades.insertMany([{
     "deleted" : false,
     "params" : {
         "code" : "000993",
+        "executeDate" : "",
         "monitorTime" : {
             "start" : "09:30",
             "end" : "15:00"
