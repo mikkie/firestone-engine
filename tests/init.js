@@ -1,5 +1,5 @@
 var now = new Date();
-var todayStr = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+var todayStr = `${now.getFullYear()}-${('0' + (now.getMonth() + 1)).slice(-2)}-${('0' + now.getDate()).slice(-2)}`;
 db.createCollection('users');
 db.users.insert({
    username: "aqua",
