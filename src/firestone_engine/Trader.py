@@ -21,7 +21,7 @@ class Trader(object):
         self.is_finsih_flag = False
         self.scheduler = BackgroundScheduler()
         end_date = datetime.now() + timedelta(days = 1)
-        self.end_date = '{}-{}-{}'.format(end_date.year,end_date.month,end_date.day)
+        self.end_date = '{}-{}-{}'.format(end_date.year,('0' + str(end_date.month))[-2:],('0' + str(end_date.day))[-2:])
         for i, hour in enumerate(hours):
             trigger = CronTrigger(hour=hour,minute=minutes[i],second='*/4', end_date=self.end_date)
             if(i == len(hours) - 1):

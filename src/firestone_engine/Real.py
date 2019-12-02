@@ -21,7 +21,7 @@ class Real(object):
         self.tradeId = tradeId
         if(date is None):
             today = datetime.now()
-            date = '{}-{}-{}'.format(today.year,today.month,today.day)
+            date = '{}-{}-{}'.format(today.year,('0' + str(today.month))[-2:],('0' + str(today.day))[-2:])
         self.date = date
         self.lastRunTime = None
         self.client = MongoClient(Real._MONFO_URL, 27017)
@@ -117,7 +117,7 @@ class Real(object):
             return update
         htbh = self.trade['order']['result']['data']['htbh']
         today = datetime.now()
-        htrq = '{}{}{}'.format(today.year,today.month,today.day)
+        htrq = '{}{}{}'.format(today.year,('0' + str(today.month))[-2:],('0' + str(today.day))[-2:])
         result = self.cancelDelegate(htbh, htrq)
         self.updateTrade(result)
         return result

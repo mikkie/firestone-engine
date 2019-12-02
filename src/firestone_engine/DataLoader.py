@@ -37,12 +37,12 @@ class DataLoader(object):
         self.scheduler = BackgroundScheduler()
         self.date = date
         today = datetime.now()
-        self.today = '{}-{}-{}'.format(today.year,today.month,today.day)
+        self.today = '{}-{}-{}'.format(today.year,('0' + str(today.month))[-2:],('0' + str(today.day))[-2:])
         # self.today_datetime = datetime(today.year,today.month,today.day,tzinfo=DataLoader.UTC_8)
         if(self.date is None):
             self.date = self.today
         end_date = today + timedelta(days = 1)
-        end_date = '{}-{}-{}'.format(end_date.year,end_date.month,end_date.day)
+        end_date = '{}-{}-{}'.format(end_date.year,('0' + str(end_date.month))[-2:],('0' + str(end_date.day))[-2:])
         self.load_codes_from_db = False
         self.code_list = self.get_code_list(code_list)
         for i, hour in enumerate(hours):
