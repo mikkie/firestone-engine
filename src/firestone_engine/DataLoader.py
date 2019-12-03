@@ -129,7 +129,7 @@ class DataLoader(object):
                     DataLoader._logger.error('failed to get the data for {}'.format(self.code_list))
                     return      
                 json_list = json.loads(df.to_json(orient='records'))
-                print(json_list)
+                DataLoader._logger.info('get data length = {}'.format(len(json_list)))
                 for json_data in json_list:
                     code = json_data['code']
                     code = Constants.map_code(json_data['name'], json_data['code'])
