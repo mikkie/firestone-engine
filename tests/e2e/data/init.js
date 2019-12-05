@@ -38,7 +38,7 @@ db.strategies.insertMany([{
             "low" : "-0.5",
             "high" : "2.5"
         },
-        "volume" : 100
+        "volume" : 1000
     }
 },{
     "_id" : ObjectId("5da19b7d181fc3600c5544c3"),
@@ -66,7 +66,7 @@ db.strategies.insertMany([{
             "percent" : "1.48",
             "amount" : "50"
         },
-        "volume" : 100
+        "volume" : 1000
     }
 }]);
 db.mocktrades.insertMany([{

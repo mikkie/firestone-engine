@@ -99,8 +99,12 @@ class Real(object):
     def createOrder(self):
         code = self.trade['params']['code']
         price = float(self.data['data'][-1]['price'])
-        volume = int(self.trade['params']['volume'])
-        result = self.createDelegate(code, price, volume, self.strategyMeta['op'])
+        amount = float(self.trade['params']['volume'])
+        volume = int(amount / price / 100) * 100
+        if(volume >= 100):
+            result = self.createDelegate(code, price, volume, self.strategyMeta['op'])
+        else:
+            result = {'result' : '买入总额不足100股', 'state' : Constants.STATE[3]}
         self.updateTrade(result)
         return result
 
