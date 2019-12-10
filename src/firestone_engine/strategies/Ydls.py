@@ -1,5 +1,7 @@
 import logging
 from .Basic import Basic
+from decimal import Decimal
+from firestone_engine.Utils import Utils
 
 class Ydls(Basic):
 
@@ -13,23 +15,21 @@ class Ydls(Basic):
 
 
     def match_shape(self):
-        if(self.dataLastRow['time'] == '09:43:48'):
-            print('xxx')
         stock_percent = self.get_current_data_percent()
         index_percent = self.get_current_index_percent()
-        high = float(self.dataLastRow['high'])
-        low = float(self.dataLastRow['low'])
-        price = float(self.dataLastRow['price'])
-        open_price = float(self.dataLastRow['open'])
-        pre_close = float(self.dataLastRow['pre_close'])
+        high = Decimal(self.dataLastRow['high'])
+        low = Decimal(self.dataLastRow['low'])
+        price = Decimal(self.dataLastRow['price'])
+        open_price = Decimal(self.dataLastRow['open'])
+        pre_close = Decimal(self.dataLastRow['pre_close'])
         if(open_price >= price):
             return False
-        if((high - low) / pre_close > self.trade['params']['speed']['vibration']):
+        if(Utils.round_dec((high - low) / pre_close * 100) > Decimal(self.trade['params']['speed']['vibration'])):
             return False
         if(index_percent < 0):
-            return stock_percent > index_percent * self.trade['params']['speed']['ratio_l']
+            return stock_percent > index_percent * Decimal(self.trade['params']['speed']['ratio_l'])
         else:
-            return stock_percent > self.trade['params']['speed']['ratio_r'] * index_percent
+            return stock_percent > Decimal(self.trade['params']['speed']['ratio_r']) * index_percent
 
 
     def match_money(self):

@@ -9,8 +9,8 @@ class TestYdls(TestBasic, unittest.TestCase):
         return {
             'tradeId' : '5db7e0a555609bb27252edb5',
             'configId' : '5db796e4429e4baab72826a0',
-            'data_col' : '300713-2019-10-30',
-            'index_col' : 'sh-2019-10-30'
+            'data_col' : '300448-2019-12-10',
+            'index_col' : 'cyb-2019-12-10'
         }    
 
 
@@ -26,7 +26,7 @@ class TestYdls(TestBasic, unittest.TestCase):
 
 
     def runAssert(self):
-        self.assertEqual(self.temp_data[-1]['time'], '09:43:48')
+        self.assertEqual(self.temp_data[-1]['time'], '13:50:24')
 
 
 if __name__ == "__main__":
