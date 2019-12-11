@@ -38,6 +38,7 @@ class TestBase(object):
                 self.runAssert()
                 return
             i += 1
+        self.runAssert()
 
 
     def runAssert(self):

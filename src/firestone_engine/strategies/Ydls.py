@@ -24,8 +24,12 @@ class Ydls(Basic):
         pre_close = Decimal(self.dataLastRow['pre_close'])
         if(open_price >= price):
             return False
-        if(Utils.round_dec((high - low) / pre_close * 100) > Decimal(self.trade['params']['speed']['vibration'])):
+        vibration = Utils.round_dec((high - low) / pre_close * 100)
+        if(vibration > Decimal(self.trade['params']['speed']['max_vibration']) or vibration < Decimal(self.trade['params']['speed']['min_vibration'])):
             return False
+        upper_shadow = Utils.round_dec((high - price) / (high - low))
+        if(upper_shadow > Decimal(self.trade['params']['speed']['upper_shadow'])):
+            return False    
         if(index_percent < 0):
             return stock_percent > index_percent * Decimal(self.trade['params']['speed']['ratio_l'])
         else:
