@@ -5,6 +5,8 @@ from firestone_engine.Utils import Utils
 
 class Ydls(Basic):
 
+    _logger = logging.getLogger(__name__)
+
     _MIN_TIME_PERIOD_LENGTH = 15
 
 
@@ -30,10 +32,14 @@ class Ydls(Basic):
         upper_shadow = Utils.round_dec((high - price) / (high - low))
         if(upper_shadow > Decimal(self.trade['params']['speed']['upper_shadow'])):
             return False    
+        flag = False
         if(index_percent < 0):
-            return stock_percent > index_percent * Decimal(self.trade['params']['speed']['ratio_l'])
+            flag = stock_percent > index_percent * Decimal(self.trade['params']['speed']['ratio_l'])
         else:
-            return stock_percent > Decimal(self.trade['params']['speed']['ratio_r']) * index_percent
+            flag = stock_percent > Decimal(self.trade['params']['speed']['ratio_r']) * index_percent
+        if(flag):
+            Ydls._logger.info(f'Ydls matched shape open_price = {open_price}, price = {price}, vibration = {vibration}, upper_shadow = {upper_shadow}, stock_percent = {stock_percent}')
+        return flag
 
 
     def match_money(self):
@@ -46,4 +52,8 @@ class Ydls(Basic):
         index = index * -1 if length >= index else length * -1
         pre_amount = float(self.data[index]['amount'])
         cur_amount = float(self.dataLastRow['amount'])
-        return cur_amount - pre_amount >= amount
+        buy_amount = cur_amount - pre_amount
+        flag = buy_amount >= amount
+        if(flag):
+            Ydls._logger.info(f'Ydls matched money buy_amount = {buy_amount}')
+        return flag
