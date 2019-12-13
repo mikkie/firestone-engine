@@ -62,9 +62,7 @@ db.strategies.insertMany([{
             "high" : "1.0"
         },
         "speed" : {
-            "min_vibration" : "1.5",
-            "max_vibration" : "1.5",
-            "upper_shadow" : "0.2",
+            "lower_shadow" : "0.2",
             "ratio_l" : "2",
             "ratio_r" : "3",
             "time" : "3.1",
@@ -217,14 +215,12 @@ db.mocktrades.insertMany([{
             "high" : "10.0"
         },
         "percent" : {
-            "low" : "1.3",
-            "high" : "1.5"
+            "low" : "-1.16",
+            "high" : "-1.14"
         },
         "speed" : {
-            "min_vibration" : "0.5",
-            "max_vibration" : "3.5",
-            "upper_shadow" : "0.2",
-            "ratio_l" : "2",
+            "lower_shadow" : "0.2",
+            "ratio_l" : "3",
             "ratio_r" : "3",
             "time" : "3.1",
             "amount" : "97"

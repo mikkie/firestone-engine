@@ -22,15 +22,8 @@ class Ydls(Basic):
         high = Decimal(self.dataLastRow['high'])
         low = Decimal(self.dataLastRow['low'])
         price = Decimal(self.dataLastRow['price'])
-        open_price = Decimal(self.dataLastRow['open'])
-        pre_close = Decimal(self.dataLastRow['pre_close'])
-        if(open_price >= price):
-            return False
-        vibration = Utils.round_dec((high - low) / pre_close * 100)
-        if(vibration > Decimal(self.trade['params']['speed']['max_vibration']) or vibration < Decimal(self.trade['params']['speed']['min_vibration'])):
-            return False
-        upper_shadow = Utils.round_dec((high - price) / (high - low))
-        if(upper_shadow > Decimal(self.trade['params']['speed']['upper_shadow'])):
+        lower_shadow = Utils.round_dec((price - low) / (high - low))
+        if(lower_shadow > Decimal(self.trade['params']['speed']['lower_shadow'])):
             return False    
         flag = False
         if(index_percent < 0):
@@ -38,7 +31,7 @@ class Ydls(Basic):
         else:
             flag = stock_percent > Decimal(self.trade['params']['speed']['ratio_r']) * index_percent
         if(flag):
-            Ydls._logger.info(f'Ydls matched shape open_price = {open_price}, price = {price}, vibration = {vibration}, upper_shadow = {upper_shadow}, stock_percent = {stock_percent}')
+            Ydls._logger.info(f'Ydls matched shape lower_shadow = {lower_shadow}, stock_percent = {stock_percent}')
         return flag
 
 
