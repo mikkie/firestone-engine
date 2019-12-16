@@ -1,5 +1,6 @@
 import logging
 from datetime import datetime
+from decimal import Decimal
 from firestone_engine.Utils import Utils
 
 class Base(object):
@@ -46,4 +47,12 @@ class Base(object):
     def get_data_length(self):
         return len(self.data)
 
+    def is_positive_buy(self, row, last_row):
+        if(last_row['time'] <= '09:30:03'):
+            return False
+        if((datetime.strptime(row['time'], '%H:%M:%S') - datetime.strptime(last_row['time'], '%H:%M:%S')).seconds >= 5):
+            return False
+        price = Decimal(row['price'])
+        a1_p = Decimal(last_row['a1_p'])
+        return price >= a1_p
     

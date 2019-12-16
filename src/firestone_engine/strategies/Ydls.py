@@ -23,6 +23,8 @@ class Ydls(Basic):
         low = Decimal(self.dataLastRow['low'])
         price = Decimal(self.dataLastRow['price'])
         lower_shadow = Utils.round_dec((price - low) / (high - low))
+        if(price == low):
+            return False
         if(lower_shadow > Decimal(self.trade['params']['speed']['lower_shadow'])):
             return False    
         flag = False
@@ -41,11 +43,15 @@ class Ydls(Basic):
             return False
         time = float(self.trade['params']['speed']['time'])
         amount = float(self.trade['params']['speed']['amount']) * 10000
-        index = int(20 * time)
+        index = int(20 * time) + 1
         index = index * -1 if length >= index else length * -1
-        pre_amount = float(self.data[index]['amount'])
-        cur_amount = float(self.dataLastRow['amount'])
-        buy_amount = cur_amount - pre_amount
+        buy_amount = 0
+        while(index < -1):
+            pre_amount = float(self.data[index]['amount'])
+            next_amount = float(self.data[index + 1]['amount'])
+            if(self.is_positive_buy(self.data[index + 1], self.data[index])):
+                buy_amount += (next_amount - pre_amount)
+            index += 1
         flag = buy_amount >= amount
         if(flag):
             Ydls._logger.info(f'Ydls matched money buy_amount = {buy_amount}')
