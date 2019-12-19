@@ -9,7 +9,7 @@ class BasicSell(Base):
     _logger = logging.getLogger(__name__)
 
     def matchCondition(self):
-        if(self.match_hard_stop() or self.match_sell_on_zt() or self.match_soft_stop()):
+        if(self.match_hard_stop() or self.match_soft_stop()):
             return Base.matchCondition(self)   
         return False
 
@@ -21,14 +21,19 @@ class BasicSell(Base):
 
 
     def match_sell_on_zt(self):
-        if(self.trade['params']['sell_on_zt'] == '1'):
-            price = Decimal(self.dataLastRow['price'])
-            pre_close = float(self.dataLastRow['pre_close'])
-            if(abs(price - Utils.round_dec(pre_close * 1.1)) < Base.SMALL_NUMBER):
-                return True
-        return False
+        price = Decimal(self.dataLastRow['price'])
+        pre_close = float(self.dataLastRow['pre_close'])
+        if(abs(price - Utils.round_dec(pre_close * 1.1)) < Base.SMALL_NUMBER):
+            if(self.trade['params']['sell_on_zt'] == '1'):
+                return 1
+            return 0    
+        return -1
 
     def match_soft_stop(self):
+        if(self.match_sell_on_zt() == 1):
+            return True
+        elif(self.match_sell_on_zt() == 0):
+            return False
         if(not hasattr(self, 'soft_stop')):
             self.soft_stop = self.calc_soft_stop()
             return False
@@ -58,7 +63,11 @@ class BasicSell(Base):
         max_index = float(self.trade['params']['soft_stop']['max_index'])
         ratio_stock = float(self.trade['params']['soft_stop']['ratio_stock'])
         ratio_index = float(self.trade['params']['soft_stop']['ratio_index'])
-        y1 = (max_loss / 100) * math.pow(percent - 10, 2) if percent >= 0 else (max_loss / 100) * math.pow(percent + 10, 2)
+        pre_close = float(self.dataLastRow['pre_close'])
+        zt_p = float(Utils.round_dec((Utils.round_dec(pre_close * 1.1) - Decimal(pre_close)) / Decimal(pre_close) * 100))
+        if(index_percent > max_index):
+            ratio_index = 0
+        y1 = (max_loss / 100) * math.pow(percent - zt_p, 2) if percent >= 0 else (max_loss / 100) * math.pow(percent + zt_p, 2)
         y2 = (max_loss / math.pow(max_index, 2)) * math.pow(index_percent - max_index, 2) if(index_percent >= 0) else (max_loss / math.pow(max_index, 2)) * math.pow(index_percent + max_index, 2)
-        y = ((y1 * ratio_stock) + (y2 * ratio_index)) / 10
+        y = ((y1 * ratio_stock) + (y2 * ratio_index)) / (ratio_stock + ratio_index)
         return Utils.round_dec(percent - y)
