@@ -2,10 +2,13 @@ import logging
 from datetime import datetime
 from decimal import Decimal
 from firestone_engine.Utils import Utils
+import math
 
 class Base(object):
 
     _logger = logging.getLogger(__name__)
+
+    SMALL_NUMBER = math.pow(10, -6)
       
     def run(self, trade, config, data, index):
         self.trade = trade

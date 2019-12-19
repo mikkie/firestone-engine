@@ -70,6 +70,30 @@ db.strategies.insertMany([{
         },
         "volume" : 1000
     }
+},{
+    "_id" : ObjectId("5da19b7d181fc3600c5544c4"),
+    "name" : "基础策略",
+    "description" : "在<i>监控时间</i>范围内,动态止盈止损，另外<i>涨幅</i>低于强制<i>止损线</i>或<i>涨停</i>，强制卖出股票",
+    "op" : "sell",
+    "url" : "BasicSell",
+    "parameters" : {
+        "code" : "",
+        "executeDate" : "",
+        "monitorTime" : {
+            "start" : "09:30",
+            "end" : "15:00"
+        },
+        "hard_stop" : -4,
+        "sell_on_zt" : "1",
+        "soft_stop" : {
+            "hit_stop_limit" : 5,
+            "max_loss" : 3,
+            "max_index" : 3,
+            "ratio_stock" : 7,
+            "ratio_index" : 3
+        },
+        "volume" : 1000
+    }
 }]);
 db.mocktrades.insertMany([{
     "code" : "300691",
@@ -196,7 +220,7 @@ db.mocktrades.insertMany([{
 },
 {
     "_id" : ObjectId("5db7e0a555609bb27252edb5"),
-    "code" : "300713",
+    "code" : "300448",
     "state" : "运行中",
     "result" : "无",
     "userId" : ObjectId("5d905db9fc84d3224b0eb59c"),
@@ -224,6 +248,34 @@ db.mocktrades.insertMany([{
             "ratio_r" : "3",
             "time" : "3.1",
             "amount" : "97"
+        },
+        "volume" : 1000
+    }
+},
+{
+    "_id" : ObjectId("5db7e0a555609bb27252edb6"),
+    "code" : "300448",
+    "state" : "运行中",
+    "result" : "无",
+    "userId" : ObjectId("5d905db9fc84d3224b0eb59c"),
+    "strategyId" : ObjectId("5da19b7d181fc3600c5544c4"),
+    "createDate" : ISODate("2019-12-19T00:00:00.000Z"),
+    "deleted" : false,
+    "params" : {
+        "code" : "300448",
+        "executeDate" : "2019-12-19",
+        "monitorTime" : {
+            "start" : "09:30",
+            "end" : "15:00"
+        },
+        "hard_stop" : -4,
+        "sell_on_zt" : "1",
+        "soft_stop" : {
+            "hit_stop_limit" : 5,
+            "max_loss" : 1,
+            "max_index" : 1.5,
+            "ratio_stock" : 7,
+            "ratio_index" : 3
         },
         "volume" : 1000
     }
