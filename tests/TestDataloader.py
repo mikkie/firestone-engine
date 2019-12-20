@@ -9,7 +9,7 @@ class TestDataloader(unittest.TestCase):
 
     def test_get_code_list_from_db(self):
         code_list = self.dl.get_code_list_from_db()
-        self.assertEqual(len(code_list),6)
+        self.assertEqual(len(code_list),5)
         print(code_list)    
 
 

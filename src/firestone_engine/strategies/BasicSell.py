@@ -17,7 +17,10 @@ class BasicSell(Base):
     def match_hard_stop(self):
         percent = self.get_current_data_percent()
         hard_stop = Decimal(self.trade['params']['hard_stop'])
-        return percent < hard_stop
+        flag = percent < hard_stop
+        if(flag):
+            BasicSell._logger.info(f"BasicSell code={self.dataLastRow['code']} match hard_stop percent={percent}, hard_stop={hard_stop}")
+        return flag
 
 
     def match_sell_on_zt(self):
@@ -31,6 +34,7 @@ class BasicSell(Base):
 
     def match_soft_stop(self):
         if(self.match_sell_on_zt() == 1):
+            BasicSell._logger.info(f"BasicSell code={self.dataLastRow['code']} match sell_on_zt")
             return True
         elif(self.match_sell_on_zt() == 0):
             return False
@@ -42,6 +46,7 @@ class BasicSell(Base):
         percent = self.get_current_data_percent()
         last_percent = self.get_percent(self.data[-2])
         if(percent < self.soft_stop):
+            BasicSell._logger.info(f"BasicSell code={self.dataLastRow['code']} match soft_stop percent={percent} soft_stop={self.soft_stop}")
             if(not hasattr(self, 'hit_stop_count')):
                 self.hit_stop_count = 1
                 return False
