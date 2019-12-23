@@ -39,6 +39,10 @@ class Base(object):
         pre_close = float(row['pre_close'])
         return Utils.round_dec((price - pre_close) / pre_close * 100)
 
+    def get_percent_by_price(self, price, row):
+        pre_close = float(row['pre_close'])
+        return Utils.round_dec((price - pre_close) / pre_close * 100)
+
 
     def get_current_data_percent(self):
         return self.get_percent(self.dataLastRow)

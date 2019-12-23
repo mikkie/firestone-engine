@@ -83,6 +83,8 @@ db.strategies.insertMany([{
             "start" : "09:30",
             "end" : "15:00"
         },
+        "cb" : "",
+        "start_line" : 0,
         "hard_stop" : -4,
         "sell_on_zt" : "1",
         "soft_stop" : {
@@ -268,6 +270,8 @@ db.mocktrades.insertMany([{
             "start" : "09:30",
             "end" : "15:00"
         },
+        "cb" : "7.70",
+        "start_line" : -3,
         "hard_stop" : -4,
         "sell_on_zt" : "1",
         "soft_stop" : {

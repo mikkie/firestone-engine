@@ -15,7 +15,8 @@ class BasicSell(Base):
 
 
     def match_hard_stop(self):
-        percent = self.get_current_data_percent()
+        cb = float(self.trade['params']['cb'])
+        percent = self.get_percent_by_price(cb, self.dataLastRow)
         hard_stop = Decimal(self.trade['params']['hard_stop'])
         flag = percent < hard_stop
         if(flag):
@@ -32,7 +33,15 @@ class BasicSell(Base):
             return 0    
         return -1
 
+    def match_start_line(self):
+        cb = float(self.trade['params']['cb'])
+        percent = self.get_percent_by_price(cb, self.dataLastRow)
+        start_line = Decimal(self.trade['params']['start_line'])
+        return percent > start_line
+
     def match_soft_stop(self):
+        if(not self.match_start_line()):
+            return False
         if(self.match_sell_on_zt() == 1):
             BasicSell._logger.info(f"BasicSell code={self.dataLastRow['code']} match sell_on_zt")
             return True
