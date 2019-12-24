@@ -59,6 +59,8 @@ class Real(object):
         if(self.strategy.run(self.trade, self.config, self.data['data'], self.data['index'])):
             result = self.createOrder()
             if(result['state'] == Constants.STATE[2]):
+                if(self.strategyMeta['op'] == 'buy'):
+                    self.updateConfig({ '$inc': { 'curBuyNum': 1 } })
                 return {'state' : result['state'], 'htbh' : result['order']['result']['data']['htbh']}
         return {'state' : self.trade['state']}
 
@@ -146,9 +148,7 @@ class Real(object):
         if(len(update) == 0):
             return
         self.updateTrade(update)
-        if(update['state'] == Constants.STATE[4] and self.strategyMeta['op'] == 'buy'):
-            self.updateConfig({ '$inc': { 'curBuyNum': 1 } })
-
+        
 
     def queryChenjiao(self, htbh):
         return {'result' : 'not allowed', 'state' : Constants.STATE[3]}
