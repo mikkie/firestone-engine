@@ -8,6 +8,7 @@ from .Constants import Constants
 from .strategies.Base import Base
 from .strategies.Basic import Basic
 from .strategies.Ydls import Ydls
+from .strategies.BasicSell import BasicSell
 
 class Real(object):
 
@@ -164,7 +165,9 @@ class Real(object):
         class_name = self.strategyMeta['url']
         strategyClass = locate('firestone_engine.strategies.{}.{}'.format(class_name, class_name))
         self.strategy = strategyClass()
+        if(self.strategy is None):
+            Real._logger.error(f'failed to load strategy {class_name}')
 
 
     def close(self):
-        self.client.close() 
+        self.client.close()
