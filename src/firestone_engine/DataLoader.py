@@ -9,6 +9,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
 from .ProxyManager import ProxyManager
 from .Constants import Constants
+from .HotConcept import HotConcept
 
 class DataLoader(object):
 
@@ -34,6 +35,7 @@ class DataLoader(object):
         self.client = MongoClient(DataLoader._MONFO_URL, 27017)
         self.data_db = self.client[DataLoader._DATA_DB]
         self.db = self.client[os.environ['FR_DB']]
+        self.hot_concept = HotConcept(self.db)
         self.scheduler = BackgroundScheduler()
         self.date = date
         today = datetime.now()
@@ -47,10 +49,12 @@ class DataLoader(object):
         self.code_list = self.get_code_list(code_list)
         for i, hour in enumerate(hours):
             trigger = CronTrigger(hour=hour,minute=minutes[i],second='*/3', end_date=end_date)
+            trigger_concept = CronTrigger(hour=hour,minute=minutes[i],second='0', end_date=end_date)
             if(i == len(hours) - 1):
                 self.scheduler.add_job(self.run,id="last_job",trigger=trigger)
             else:
                 self.scheduler.add_job(self.run,trigger=trigger)
+            self.scheduler.add_job(self.run_concept,trigger=trigger_concept)
 
     def get_code_list(self, code_list):
         if(DataLoader._CODE_FROM_DB in code_list):
@@ -141,6 +145,10 @@ class DataLoader(object):
                         self.lastRows[code] = json_data
         except Exception as e:
             DataLoader._logger.error(e)
+
+
+    def run_concept(self):
+        self.hot_concept.load_hot_concept()
 
 
     def run_mock(self):
