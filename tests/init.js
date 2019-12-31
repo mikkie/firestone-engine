@@ -15,6 +15,7 @@ db.configmocks.insert({
     "username" : "48039195",
     "gdzh" : "0098894246",
     "sh_gdzh" : "A474614369",
+    "monitor_concept" : [],
     "userId" : ObjectId("5d905db9fc84d3224b0eb59c")
 });
 db.strategies.insertMany([{
@@ -95,6 +96,22 @@ db.strategies.insertMany([{
             "ratio_index" : 3
         },
         "volume" : 1000
+    }
+},{
+    "_id" : ObjectId("5da19b7d181fc3600c5544c5"),
+    "name" : "题材选股",
+    "description" : "根据实时热门概念排行选出股票进行监控",
+    "op" : "select",
+    "url" : "ConceptPick",
+    "parameters" : {
+        "code" : "",
+        "executeDate" : "",
+        "index_percent" : "1.00",
+        "company_count" : "500",
+        "stock_percent" : "9.90",
+        "top_concept" : "3",
+        "max_percent" : "5.00",
+        "strategyId" : "5da19b7d181fc3600c5544c3"
     }
 }]);
 db.mocktrades.insertMany([{
@@ -282,6 +299,27 @@ db.mocktrades.insertMany([{
             "ratio_index" : 3
         },
         "volume" : 1000
+    }
+},
+{
+    "_id" : ObjectId("5db7e0a555609bb27252edb7"),
+    "code" : "",
+    "state" : "运行中",
+    "result" : "无",
+    "userId" : ObjectId("5d905db9fc84d3224b0eb59c"),
+    "strategyId" : ObjectId("5da19b7d181fc3600c5544c5"),
+    "createDate" : ISODate("2019-12-29T00:00:00.000Z"),
+    "deleted" : false,
+    "params" : {
+        "code" : "",
+        "executeDate" : "",
+        "index_percent" : "1.00",
+        "company_count" : "500",
+        "stock_percent" : "9.90",
+        "top_concept" : "3",
+        "monitor_count" : "5",
+        "max_percent" : "5.00",
+        "strategyId" : "5da19b7d181fc3600c5544c3"
     }
 }
 ]);

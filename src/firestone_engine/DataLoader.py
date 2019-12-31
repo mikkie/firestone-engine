@@ -148,7 +148,10 @@ class DataLoader(object):
 
 
     def run_concept(self):
-        self.hot_concept.load_hot_concept()
+        try:
+            self.hot_concept.load_hot_concept()
+        except Exception as e:
+            DataLoader._logger.error(f'load hot concept failed, e = {e}')
 
 
     def run_mock(self):
