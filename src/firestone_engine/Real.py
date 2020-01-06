@@ -9,6 +9,7 @@ from .strategies.Base import Base
 from .strategies.Basic import Basic
 from .strategies.Ydls import Ydls
 from .strategies.BasicSell import BasicSell
+from .strategies.ConceptPick import ConceptPick
 
 class Real(object):
 
@@ -41,28 +42,31 @@ class Real(object):
 
     def run(self):
         self.load_trade_config()
-        self.load_data()
         if(self.config['curBuyNum'] >= self.config['maxBuyNum']):
             force_state = {'state' : Constants.STATE[4]}
             self.updateTrade(force_state)
             return force_state
-        if(len(self.data['data']) == 0):
-            return {'state' : self.trade['state']}
         if(self.trade['state'] == Constants.STATE[5]):
             return self.cancelOrder()
         if(self.trade['state'] != Constants.STATE[0]):
             return {'state' : self.trade['state']}
-        elif(self.trade['result'] is not None and self.trade['result'] != '无' and self.trade['result'] != ''):
-            self.updateTrade({'result' : '无'})
-        if(self.data['data'][-1]['time'] == self.lastRunTime):
-            return {'state' : self.trade['state']}
-        self.lastRunTime = self.data['data'][-1]['time']
-        if(self.strategy.run(self.trade, self.config, self.data['data'], self.data['index'])):
-            result = self.createOrder()
-            if(result['state'] == Constants.STATE[2]):
-                if(self.strategyMeta['op'] == 'buy'):
-                    self.updateConfig({ '$inc': { 'curBuyNum': 1 } })
-                return {'state' : result['state'], 'htbh' : result['order']['result']['data']['htbh']}
+        if(self.strategy.need_create_order()):
+            if(self.trade['result'] is not None and self.trade['result'] != '无' and self.trade['result'] != ''):
+                self.updateTrade({'result' : '无'})
+            self.load_data()
+            if(len(self.data['data']) == 0):
+                return {'state' : self.trade['state']}
+            if(self.data['data'][-1]['time'] == self.lastRunTime):
+                return {'state' : self.trade['state']}
+            self.lastRunTime = self.data['data'][-1]['time']
+            if(self.strategy.run(self.trade, self.config, self.data['data'], self.data['index'])):
+                result = self.createOrder()
+                if(result['state'] == Constants.STATE[2]):
+                    if(self.strategyMeta['op'] == 'buy'):
+                        self.updateConfig({ '$inc': { 'curBuyNum': 1 } })
+                    return {'state' : result['state'], 'htbh' : result['order']['result']['data']['htbh']}
+        else:
+            self.strategy.run(self.trade, self.config, self.db, type(self).__name__ == 'Mock')
         return {'state' : self.trade['state']}
 
 

@@ -21,12 +21,19 @@ class ConceptPick(object):
     def run(self, trade, config, db, is_mock):
         self.is_mock = is_mock
         self.db = db
+        self.monitor_codes = []
         today = datetime.now()
         self.today = '{}-{}-{}'.format(today.year,('0' + str(today.month))[-2:],('0' + str(today.day))[-2:])
         self.trade = trade
         self.config = config
         self.get_match_concepts()
         self.pick_all_match_stocks()
+        if(len(self.monitor_codes) > 0):
+            self.updateTrade({'result' : f'创建监控:{self.monitor_codes}'})
+
+
+    def need_create_order(self):
+        return False
 
 
     def get_match_concepts(self):
@@ -129,6 +136,12 @@ class ConceptPick(object):
         return self.db[collname].update_one({"_id" : self.config['_id']}, update)
 
 
+    def updateTrade(self, update):
+        ConceptPick._logger.info('update tradeId={} with update = {}'.format(self.trade['_id'], update))
+        collname = 'mocktrades' if self.is_mock else 'trades'
+        return self.db[collname].update_one({"_id" : self.trade['_id']},{"$set" : update})
+
+
     def start_monitor(self, df):
         collname = 'mocktrades' if self.is_mock else 'trades'
         codes_data = self.db[collname].find({"deleted":False, "params.executeDate" : self.today},{"code" : 1, "_id" : 0})
@@ -154,4 +167,5 @@ class ConceptPick(object):
                 "params" : strategy['parameters']
             }
             self.db[collname].insert_one(trade_json)
+            self.monitor_codes.append(code)
             ConceptPick._logger.info(f"create trade = {trade_json}")

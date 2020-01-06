@@ -21,6 +21,10 @@ class Base(object):
             return self.matchCondition()
         return False
 
+
+    def need_create_order(self):
+        return True
+
         
     def match_monitorTime(self):
         start = datetime.strptime('{} {}:00'.format(self.dataLastRow['date'], self.trade['params']['monitorTime']['start']), '%Y-%m-%d %H:%M:%S')    
