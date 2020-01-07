@@ -1,5 +1,7 @@
 import logging
 import time
+import json
+import requests
 import pytz
 from datetime import datetime, timedelta
 import tushare as ts
@@ -166,6 +168,25 @@ class ConceptPick(object):
                 "deleted" : False,
                 "params" : strategy['parameters']
             }
-            self.db[collname].insert_one(trade_json)
-            self.monitor_codes.append(code)
+            res = self.db[collname].insert_one(trade_json)
+            tradeId = str(res.inserted_id)
+            self.start_firerock_process(code, tradeId)
             ConceptPick._logger.info(f"create trade = {trade_json}")
+
+
+    def start_firerock_process(self, code, tradeId):
+        header = {
+            'Content-Type': 'application/json; charset=utf-8'
+        }
+        postData = json.dumps({
+            "codes": [code],
+            "tradeId" : tradeId
+        })
+        try:
+            response = requests.post('http://localhost:3000/api/v1/firestonerock',data=postData, headers=header)
+            result = json.loads(response.text)
+            if(result['success'] is not None):
+                self.monitor_codes.append(code)
+                ConceptPick._logger.info(f'start the firerock process success, code = {code}, tradeId = {tradeId}')
+        except Exception as e:
+            ConceptPick._logger.error(f'start the firerock process failed, code = {code}, tradeId = {tradeId}, e = {e}')
