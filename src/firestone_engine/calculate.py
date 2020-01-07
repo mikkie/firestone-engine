@@ -33,7 +33,7 @@ __license__ = "mit"
 _logger = logging.getLogger(__name__)
 _handler = TimedRotatingFileHandler('logs/firerock.log', when='D', interval=1, backupCount=10 ,encoding='UTF-8')
 
-def calculate(tradeId, is_mock, ignore_trade, date, hours, minutes):
+def calculate(tradeId, is_mock, ignore_trade, date, hours, minutes, seconds):
     """execute the trade
 
     Args:
@@ -42,10 +42,12 @@ def calculate(tradeId, is_mock, ignore_trade, date, hours, minutes):
     Returns:
       trade result
     """
+    if(seconds is None):
+        seconds = '*/4'
     if(hours is None):
-        trader = Trader(tradeId, is_mock, ignore_trade, date)
+        trader = Trader(tradeId, is_mock, ignore_trade, date, seconds=seconds)
     else:    
-        trader = Trader(tradeId, is_mock, ignore_trade, date, hours=hours, minutes=minutes)
+        trader = Trader(tradeId, is_mock, ignore_trade, date, hours=hours, minutes=minutes, seconds=seconds)
     trader.start()
     try:
         while(not trader.is_finsih()):
@@ -129,6 +131,11 @@ def parse_args(args):
         help="i.e. 30-59 0-29 *",
         nargs='+',
         metavar="minute")
+    parser.add_argument(
+        "--seconds",
+        dest="seconds",
+        help="i.e. */4",
+        metavar="second")
     return parser.parse_args(args)
 
 
@@ -159,7 +166,7 @@ def main(args):
     else:
         os.environ['FR_DB'] = 'firestone'        
     setup_logging(args.loglevel)
-    calculate(args.tradeId, args.mock, args.ignore_trade, args.date, args.hours, args.minutes)
+    calculate(args.tradeId, args.mock, args.ignore_trade, args.date, args.hours, args.minutes, args.seconds)
 
 
 def run():

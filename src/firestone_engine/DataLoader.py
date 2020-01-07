@@ -63,6 +63,8 @@ class DataLoader(object):
         colls = list(self.data_db.list_collections())
         codes = []
         for code in code_list:
+            if(code == 'N/A'):
+                continue
             name = code + '-' + self.date + ('-m' if self.is_mock else '')
             if(name not in [coll['name'] for coll in colls]):
                 codes.append(code)
@@ -93,7 +95,7 @@ class DataLoader(object):
         if(self.mock_trade):
             colname = 'mocktrades'
         codes_data = self.db[colname].find({"deleted":False, "params.executeDate" : self.today},{"code" : 1, "_id" : 0})
-        code_list = [code_data["code"] for code_data in list(codes_data)]
+        code_list = [code_data["code"] for code_data in list(codes_data) if code_data["code"] != 'N/A']
         for code in code_list:
             if(code.startswith('3')):
                 if(Constants.INDEX[5] not in code_list):

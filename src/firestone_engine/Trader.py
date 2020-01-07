@@ -13,7 +13,7 @@ class Trader(object):
 
     _logger = logging.getLogger(__name__)
 
-    def __init__(self, tradeId, is_mock, ignore_trade, date ,hours=['9','11','10,13-14'], minutes=['30-59','0-29','*']):
+    def __init__(self, tradeId, is_mock, ignore_trade, date ,hours=['9','11','10,13-14'], minutes=['30-59','0-29','*'], seconds='*/4'):
         self.hours = hours
         self.minutes = minutes
         self.tradeId = tradeId
@@ -23,7 +23,7 @@ class Trader(object):
         end_date = datetime.now() + timedelta(days = 1)
         self.end_date = '{}-{}-{}'.format(end_date.year,('0' + str(end_date.month))[-2:],('0' + str(end_date.day))[-2:])
         for i, hour in enumerate(hours):
-            trigger = CronTrigger(hour=hour,minute=minutes[i],second='*/4', end_date=self.end_date)
+            trigger = CronTrigger(hour=hour,minute=minutes[i],second=seconds, end_date=self.end_date)
             if(i == len(hours) - 1):
                 self.scheduler.add_job(self.run,id="last_job", trigger=trigger)
             else:    
