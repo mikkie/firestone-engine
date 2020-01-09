@@ -21,6 +21,8 @@ class ConceptPick(object):
     _MAX_SIZE = 150
 
     def run(self, trade, config, db, is_mock):
+        if(len(config['monitor_concept']) >= int(trade['params']['max_concept'])):
+            return
         self.is_mock = is_mock
         self.db = db
         self.monitor_codes = []
