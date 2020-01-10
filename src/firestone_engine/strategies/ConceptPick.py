@@ -22,6 +22,7 @@ class ConceptPick(object):
 
     def run(self, trade, config, db, is_mock):
         if(len(config['monitor_concept']) >= int(trade['params']['max_concept'])):
+            ConceptPick._logger.info('exceed max concpets number, stop monitoring')
             return
         self.is_mock = is_mock
         self.db = db
@@ -51,6 +52,8 @@ class ConceptPick(object):
             concepts = []
             for concept in hot_concepts:
                 if(float(concept['index_percent'][:-1]) < float(self.trade['params']['index_percent']) or int(concept['company_count']) > int(self.trade['params']['company_count']) or float(concept['stock_percent'][:-1]) < float(self.trade['params']['stock_percent'])):
+                    continue
+                if(self.trade['params']['concepts'] != "" and self.trade['params']['concepts'].find(concept) < 0):
                     continue
                 concepts.append(concept)
             self.match_concepts = concepts
