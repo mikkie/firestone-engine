@@ -70,7 +70,11 @@ class ConceptPick(object):
         for concept in self.match_concepts:
             try:
                 if(concept['name'] not in self.config['monitor_concept']): 
-                    self.pick_match_stocks(concept)
+                    zxs = list(self.db['zx'].find({"concept" : concept['name']}))
+                    if(len(zxs) > 0 and len(zxs[0]['codes']) > 0):
+                        self.start_monitor(zxs[0]['codes'])
+                    else:
+                        self.pick_match_stocks(concept)
             except Exception as e:
                 ConceptPick._logger.error(f"pick_match_stocks for concept {concept['name']} failed, e = {e}")
 
@@ -132,7 +136,8 @@ class ConceptPick(object):
         full_df = pd.merge(full_df, concept_df,  how='left', left_on=['code'], right_on = ['code'])
         full_df = full_df.sort_values('rank_concept')  
         full_df = full_df[0 : int(self.trade['params']['monitor_count'])]
-        self.start_monitor(full_df)
+        codes = list(full_df['code'])
+        self.start_monitor(codes)
         self.config['monitor_concept'].append(concept['name'])
         self.updateConfig({'$set' : {'monitor_concept' : self.config['monitor_concept']}})
 
@@ -149,11 +154,11 @@ class ConceptPick(object):
         return self.db[collname].update_one({"_id" : self.trade['_id']},{"$set" : update})
 
 
-    def start_monitor(self, df):
+    def start_monitor(self, all_codes):
         collname = 'mocktrades' if self.is_mock else 'trades'
         codes_data = self.db[collname].find({"deleted":False, "params.executeDate" : self.today},{"code" : 1, "_id" : 0})
         code_list = [code_data["code"] for code_data in list(codes_data)]
-        codes = [code for code in list(df['code']) if code not in code_list]
+        codes = [code for code in all_codes if code not in code_list]
         strategyId = self.trade['params']['strategyId']
         strategy_data = list(self.db['strategies'].find({"_id" : ObjectId(strategyId)}))
         if(len(strategy_data) == 0):

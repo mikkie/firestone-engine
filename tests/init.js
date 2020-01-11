@@ -330,3 +330,7 @@ db.mocktrades.insertMany([{
     }
 }
 ]);
+db.zx.insert([{
+    "concept" : "网红经济",
+    "codes" : ["002137","002878"]
+}])
