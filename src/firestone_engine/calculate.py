@@ -31,7 +31,7 @@ __copyright__ = "aqua"
 __license__ = "mit"
 
 _logger = logging.getLogger(__name__)
-_handler = TimedRotatingFileHandler('logs/firerock.log', when='D', interval=1, backupCount=10 ,encoding='UTF-8')
+_handler = TimedRotatingFileHandler('logs/firerock.log', when='M', interval=10, backupCount=50 ,encoding='UTF-8')
 
 def calculate(tradeId, is_mock, ignore_trade, date, hours, minutes, seconds):
     """execute the trade
