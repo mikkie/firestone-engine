@@ -31,11 +31,19 @@ class ConceptPick(object):
         self.today = '{}-{}-{}'.format(today.year,('0' + str(today.month))[-2:],('0' + str(today.day))[-2:])
         self.trade = trade
         self.config = config
+        if(not self.match_monitorTime()):
+            return
         self.get_match_concepts()
         self.pick_all_match_stocks()
         if(len(self.monitor_codes) > 0):
             self.updateTrade({'result' : f'创建监控:{self.monitor_codes}'})
 
+
+    def match_monitorTime(self):
+        start = datetime.strptime('{} {}:00'.format(self.today, self.trade['params']['monitorTime']['start']), '%Y-%m-%d %H:%M:%S')    
+        end = datetime.strptime('{} {}:00'.format(self.today, self.trade['params']['monitorTime']['end']), '%Y-%m-%d %H:%M:%S')
+        now = datetime.now()
+        return now >= start and now <= end
 
     def need_create_order(self):
         return False

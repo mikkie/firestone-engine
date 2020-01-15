@@ -55,6 +55,10 @@ db.strategies.insertMany([{
     "parameters" : {
         "code" : "",
         "executeDate" : "",
+        "monitorTime" : {
+            "start" : "00:00",
+            "end" : "23:59"
+        },
         "index_percent" : "1.00",
         "concepts" : "",
         "company_count" : "500",
@@ -79,6 +83,10 @@ db.mocktrades.insertMany([{
     "params" : {
         "code" : "",
         "executeDate" : "",
+        "monitorTime" : {
+            "start" : "00:00",
+            "end" : "23:59"
+        },
         "index_percent" : "1.00",
         "concepts" : "",
         "company_count" : "500",
