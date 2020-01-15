@@ -59,7 +59,7 @@ class ConceptPick(object):
                 return
             concepts = []
             for concept in hot_concepts:
-                if(float(concept['index_percent'][:-1]) < float(self.trade['params']['index_percent']) or int(concept['company_count']) > int(self.trade['params']['company_count']) or float(concept['stock_percent'][:-1]) < float(self.trade['params']['stock_percent'])):
+                if(float(concept['index_percent'][:-1]) < float(self.trade['params']['index_percent']) or int(concept['company_count']) > int(self.trade['params']['company_count']) or float(concept['stock_percent'][:-1]) < float(self.trade['params']['stock_percent']) or float(concept['net_buy']) < float(self.trade['params']['net_buy'])):
                     continue
                 if(self.trade['params']['concepts'] != "" and self.trade['params']['concepts'].find(concept['name']) < 0):
                     continue
