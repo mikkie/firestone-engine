@@ -22,10 +22,8 @@ class Ydls(Basic):
         high = Decimal(self.dataLastRow['high'])
         low = Decimal(self.dataLastRow['low'])
         price = Decimal(self.dataLastRow['price'])
-        lower_shadow = Utils.round_dec((price - low) / (high - low))
-        if(price == low):
-            return False
-        if(lower_shadow > Decimal(self.trade['params']['speed']['lower_shadow'])):
+        upper_shadow = Utils.round_dec((high - price) / (high - low))
+        if(upper_shadow > Decimal(self.trade['params']['speed']['upper_shadow'])):
             return False    
         flag = False
         if(index_percent < 0):
@@ -33,7 +31,7 @@ class Ydls(Basic):
         else:
             flag = stock_percent > Decimal(self.trade['params']['speed']['ratio_r']) * index_percent
         if(flag):
-            Ydls._logger.info(f'Ydls matched shape lower_shadow = {lower_shadow}, stock_percent = {stock_percent}')
+            Ydls._logger.info(f'Ydls matched shape upper_shadow = {upper_shadow}, stock_percent = {stock_percent}')
         return flag
 
 
