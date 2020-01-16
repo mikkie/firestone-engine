@@ -31,7 +31,7 @@ class Ydls(Basic):
         else:
             flag = stock_percent > Decimal(self.trade['params']['speed']['ratio_r']) * index_percent
         if(flag):
-            Ydls._logger.info(f'Ydls matched shape upper_shadow = {upper_shadow}, stock_percent = {stock_percent}')
+            Ydls._logger.info(f'TradeId = {self.trade["_id"]}, Ydls matched shape upper_shadow = {upper_shadow}, stock_percent = {stock_percent}')
         return flag
 
 
@@ -52,5 +52,5 @@ class Ydls(Basic):
             index += 1
         flag = buy_amount >= amount
         if(flag):
-            Ydls._logger.info(f'Ydls matched money buy_amount = {buy_amount}')
+            Ydls._logger.info(f'TradeId = {self.trade["_id"]}, Ydls matched money buy_amount = {buy_amount}')
         return flag
