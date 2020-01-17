@@ -31,7 +31,6 @@ __copyright__ = "aqua"
 __license__ = "mit"
 
 _logger = logging.getLogger(__name__)
-_handler = TimedRotatingFileHandler('logs/firerock.log', when='M', interval=10, backupCount=50 ,encoding='UTF-8')
 
 def calculate(tradeId, is_mock, ignore_trade, date, hours, minutes, seconds):
     """execute the trade
@@ -139,14 +138,15 @@ def parse_args(args):
     return parser.parse_args(args)
 
 
-def setup_logging(loglevel):
+def setup_logging(tradeId, loglevel):
     """Setup basic logging
 
     Args:
       loglevel (int): minimum loglevel for emitting messages
     """
     logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
-    logging.basicConfig(level=loglevel, format=logformat, datefmt="%Y-%m-%d %H:%M:%S", handlers=[_handler])
+    handler = TimedRotatingFileHandler(f'logs/firerock-{tradeId}.log', when='D', interval=1, backupCount=10 ,encoding='UTF-8')
+    logging.basicConfig(level=loglevel, format=logformat, datefmt="%Y-%m-%d %H:%M:%S", handlers=[handler])
 
 
 def main(args):
@@ -165,7 +165,7 @@ def main(args):
         os.environ['FR_DB'] = 'firestone-test'
     else:
         os.environ['FR_DB'] = 'firestone'        
-    setup_logging(args.loglevel)
+    setup_logging(args.tradeId, args.loglevel)
     calculate(args.tradeId, args.mock, args.ignore_trade, args.date, args.hours, args.minutes, args.seconds)
 
 
