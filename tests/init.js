@@ -67,6 +67,7 @@ db.strategies.insertMany([{
             "ratio_l" : "2",
             "ratio_r" : "3",
             "time" : "3.1",
+            "break_top" : "1.5",
             "amount" : "50"
         },
         "volume" : 1000
@@ -275,6 +276,7 @@ db.mocktrades.insertMany([{
             "ratio_l" : "3",
             "ratio_r" : "3",
             "time" : "3.1",
+            "break_top" : "5",
             "amount" : "97"
         },
         "volume" : 1000

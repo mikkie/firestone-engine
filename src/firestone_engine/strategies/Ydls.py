@@ -22,6 +22,13 @@ class Ydls(Basic):
         high = Decimal(self.dataLastRow['high'])
         low = Decimal(self.dataLastRow['low'])
         price = Decimal(self.dataLastRow['price'])
+        pre_close = Decimal(self.dataLastRow['pre_close'])
+        if(hasattr(self, 'force_stop')):
+            return False
+        break_top = Utils.round_dec((high - price) / (pre_close) * 100)
+        if(break_top > Decimal(self.trade['params']['speed']['break_top'])):
+            self.force_stop = True
+            return False
         upper_shadow = Utils.round_dec((high - price) / (high - low))
         if(upper_shadow > Decimal(self.trade['params']['speed']['upper_shadow'])):
             return False    
