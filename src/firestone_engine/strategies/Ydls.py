@@ -12,7 +12,7 @@ class Ydls(Basic):
 
     def match_data(self):
         if(Basic.match_data(self)):
-            return self.match_shape() and self.match_money()
+            return self.match_shape() and self.match_speed() and self.match_money()
         return False
 
 
@@ -28,6 +28,7 @@ class Ydls(Basic):
         break_top = Utils.round_dec((high - price) / (pre_close) * 100)
         if(break_top > Decimal(self.trade['params']['speed']['break_top'])):
             self.force_stop = True
+            Ydls._logger.info(f'TradeId = {self.trade["_id"]}, Ydls break_top = {break_top}, force stop')
             return False
         upper_shadow = Utils.round_dec((high - price) / (high - low))
         if(upper_shadow > Decimal(self.trade['params']['speed']['upper_shadow'])):
@@ -42,6 +43,24 @@ class Ydls(Basic):
         return flag
 
 
+    def match_speed(self):
+        length = self.get_data_length()
+        if(length < Ydls._MIN_TIME_PERIOD_LENGTH):
+            return False
+        time = float(self.trade['params']['speed']['time_2'])
+        index = int(20 * time) + 1
+        index = index * -1 if length >= index else length * -1
+        pre_price = Decimal(self.data[index]['price'])
+        price = Decimal(self.dataLastRow['price'])
+        pre_close = Decimal(self.dataLastRow['pre_close'])
+        percent = Utils.round_dec((price - pre_price) / (pre_close) * 100)
+        flag = percent >= Decimal(self.trade['params']['speed']['percent'])
+        if(flag):
+            Ydls._logger.info(f'TradeId = {self.trade["_id"]}, Ydls matched speed percnet = {percent}')
+        return flag
+
+
+    
     def match_money(self):
         length = self.get_data_length()
         if(length < Ydls._MIN_TIME_PERIOD_LENGTH):
