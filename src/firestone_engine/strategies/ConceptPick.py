@@ -136,7 +136,7 @@ class ConceptPick(object):
             time.sleep(3)
         full_df['percent'] = (full_df['price'].astype(float) - full_df['pre_close'].astype(float)) / full_df['pre_close'].astype(float) * 100
         index_percent = float(concept['index_percent'][:-1])
-        full_df = full_df[(full_df['percent'] > index_percent) & (full_df['percent'] <= float(self.trade['params']['max_percent']))]
+        full_df = full_df[(~full_df['code'].str.startswith('688')) & (full_df['percent'] > index_percent) & (full_df['percent'] <= float(self.trade['params']['max_percent']))]
         if(len(full_df) == 0):
             ConceptPick._logger.warning(f"no match stocks for concept {concept['name']} after rank")
             return
