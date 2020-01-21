@@ -349,4 +349,6 @@ db.mocktrades.insertMany([{
 db.zx.insert([{
     "concept" : "网红经济",
     "codes" : ["002137","002878"]
+},{"concept" : "小金属概念",
+    "codes" : ["600547"]
 }])

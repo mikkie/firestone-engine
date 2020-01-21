@@ -80,11 +80,25 @@ class ConceptPick(object):
                 if(concept['name'] not in self.config['monitor_concept']): 
                     zxs = list(self.db['zx'].find({"concept" : concept['name']}))
                     if(len(zxs) > 0 and len(zxs[0]['codes']) > 0):
-                        self.start_monitor(zxs[0]['codes'])
-                    else:
-                        self.pick_match_stocks(concept)
+                        select_codes = self.filter_select_codes(concept, zxs[0]['codes'])[:ConceptPick._BATCH_SIZE]
+                        if(len(select_codes) > 0):
+                            self.start_monitor(select_codes)
+                    self.pick_match_stocks(concept)
             except Exception as e:
                 ConceptPick._logger.error(f"pick_match_stocks for concept {concept['name']} failed, e = {e}")
+
+
+    def filter_select_codes(self, concept, codes):
+        time.sleep(3)
+        df = ts.get_realtime_quotes(codes)
+        df['percent'] = (df['price'].astype(float) - df['pre_close'].astype(float)) / df['pre_close'].astype(float) * 100
+        index_percent = float(concept['index_percent'][:-1])
+        df = df[(~df['code'].str.startswith('688')) & (df['percent'] > index_percent) & (df['percent'] <= float(self.trade['params']['max_percent']))]
+        if(len(df) == 0):
+            ConceptPick._logger.warning(f"no match select stocks for concept {concept['name']}")
+            return []
+        df = df.sort_values('percent')    
+        return list(df['code'])[0:int(self.trade['params']['monitor_count'])]
 
 
     def pick_match_stocks(self, concept):
@@ -128,12 +142,12 @@ class ConceptPick(object):
         length = len(codes)
         start = 0
         while(start < length):
+            time.sleep(3)
             end = start + ConceptPick._BATCH_SIZE
             temp_codes = codes[start : end]
             df = ts.get_realtime_quotes(temp_codes)
             full_df = full_df.append(df)
             start = end
-            time.sleep(3)
         full_df['percent'] = (full_df['price'].astype(float) - full_df['pre_close'].astype(float)) / full_df['pre_close'].astype(float) * 100
         index_percent = float(concept['index_percent'][:-1])
         full_df = full_df[(~full_df['code'].str.startswith('688')) & (full_df['percent'] > index_percent) & (full_df['percent'] <= float(self.trade['params']['max_percent']))]
