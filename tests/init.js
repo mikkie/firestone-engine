@@ -333,6 +333,7 @@ db.mocktrades.insertMany([{
             "end" : "23:59"
         },
         "index_percent" : "1.00",
+        "index_max_percent" : "5.00",
         "concepts" : "",
         "net_buy" : "-3",
         "company_count" : "500",
@@ -340,6 +341,7 @@ db.mocktrades.insertMany([{
         "max_concept" : "6",
         "top_concept" : "3",
         "monitor_count" : "5",
+        "min_percent" : "1.00",
         "max_percent" : "5.00",
         "volume" : "1000",
         "strategyId" : "5da19b7d181fc3600c5544c3"
