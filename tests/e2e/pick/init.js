@@ -96,6 +96,9 @@ db.mocktrades.insertMany([{
         "top_concept" : "3",
         "max_concept" : "6",
         "monitor_count" : "5",
+        "open_min_percent" : "-2.00",
+        "open_max_percent" : "3.00",
+        "min_percent" : "1.00",
         "max_percent" : "5.00",
         "volume" : "1000",
         "strategyId" : "5da19b7d181fc3600c5544c3"

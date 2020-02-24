@@ -62,6 +62,10 @@ db.strategies.insertMany([{
             "low" : "-4.0",
             "high" : "1.0"
         },
+        "open_percent" : {
+            "low" : "-2.0",
+            "high" : "3.0"
+        },
         "speed" : {
             "upper_shadow" : "0.2",
             "ratio_l" : "2",
@@ -121,6 +125,9 @@ db.strategies.insertMany([{
         "max_concept" : "6",
         "top_concept" : "3",
         "monitor_count" : "5",
+        "open_min_percent" : "-5.00",
+        "open_max_percent" : "6.00",
+        "min_percent" : "1.00",
         "max_percent" : "5.00",
         "volume" : "1000",
         "strategyId" : "5da19b7d181fc3600c5544c3"
@@ -273,6 +280,10 @@ db.mocktrades.insertMany([{
             "low" : "-1.16",
             "high" : "-1.14"
         },
+        "open_percent" : {
+            "low" : "-2.0",
+            "high" : "3.0"
+        },
         "speed" : {
             "upper_shadow" : "0.93",
             "ratio_l" : "3",
@@ -341,6 +352,8 @@ db.mocktrades.insertMany([{
         "max_concept" : "6",
         "top_concept" : "3",
         "monitor_count" : "5",
+        "open_min_percent" : "-2.00",
+        "open_max_percent" : "3.00",
         "min_percent" : "1.00",
         "max_percent" : "5.00",
         "volume" : "1000",

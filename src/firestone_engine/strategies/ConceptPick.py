@@ -148,8 +148,9 @@ class ConceptPick(object):
             df = ts.get_realtime_quotes(temp_codes)
             full_df = full_df.append(df)
             start = end
+        full_df['open_percent'] = (full_df['open'].astype(float) - full_df['pre_close'].astype(float)) / full_df['pre_close'].astype(float) * 100
         full_df['percent'] = (full_df['price'].astype(float) - full_df['pre_close'].astype(float)) / full_df['pre_close'].astype(float) * 100
-        full_df = full_df[(~full_df['code'].str.startswith('688')) & (full_df['percent'] > float(self.trade['params']['min_percent'])) & (full_df['percent'] <= float(self.trade['params']['max_percent']))]
+        full_df = full_df[(~full_df['code'].str.startswith('688')) & (full_df['open_percent'] >= float(self.trade['params']['open_min_percent'])) & (full_df['open_percent'] <= float(self.trade['params']['open_max_percent'])) & (full_df['percent'] >= float(self.trade['params']['min_percent'])) & (full_df['percent'] <= float(self.trade['params']['max_percent']))]
         if(len(full_df) == 0):
             ConceptPick._logger.warning(f"no match stocks for concept {concept['name']} after rank")
             return

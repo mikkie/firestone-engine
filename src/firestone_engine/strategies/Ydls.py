@@ -21,8 +21,12 @@ class Ydls(Basic):
         index_percent = self.get_current_index_percent()
         high = Decimal(self.dataLastRow['high'])
         low = Decimal(self.dataLastRow['low'])
+        open_price = float(self.dataLastRow['open'])
         price = Decimal(self.dataLastRow['price'])
         pre_close = Decimal(self.dataLastRow['pre_close'])
+        open_percent = self.get_percent_by_price(open_price, self.dataLastRow)
+        if(open_percent < Decimal(self.trade['params']['open_percent']['low']) or open_percent > Decimal(self.trade['params']['open_percent']['high'])):
+            return False
         if(hasattr(self, 'force_stop')):
             return False
         break_top = Utils.round_dec((high - price) / (pre_close) * 100)
