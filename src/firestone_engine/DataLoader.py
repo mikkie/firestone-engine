@@ -96,6 +96,13 @@ class DataLoader(object):
             colname = 'mocktrades'
         codes_data = self.db[colname].find({"deleted":False, "params.executeDate" : self.today},{"code" : 1, "_id" : 0})
         code_list = [code_data["code"] for code_data in list(codes_data) if code_data["code"] != 'N/A']
+        temp_list = []
+        for code in code_list:
+            if(',' in code):
+                temp_list.extend(code.split(','))
+            else:
+                temp_list.append(code)
+        code_list = temp_list        
         for code in code_list:
             if(code.startswith('3')):
                 if(Constants.INDEX[5] not in code_list):
@@ -107,16 +114,44 @@ class DataLoader(object):
 
 
     def load_data(self):
-        try:
-            if(self.use_proxy):
-                return tushare.get_realtime_quotes(self.code_list, proxyManager=self.proxyManager)
-            else:
-                return tushare.get_realtime_quotes(self.code_list)
-        except Exception as e:
-            DataLoader._logger.error('load data error, use_proxy = {}, e = {}'.format(self.use_proxy, e))
-            self.use_proxy = True
-            self.proxyManager.remove_proxy()
-            return None
+        list_wrapper = []
+        size = len(self.code_list)
+        df_result = None
+        if(size > 50):
+            list_size = (size // 50) + (1 if (size % 50) > 0 else 0)
+            for i in range(list_size):
+                list_wrapper.append(self.code_list[i * 50 : i * 50 + 50])
+        else:
+            list_wrapper.append(self.code_list)
+        if(self.use_proxy):
+            for l in list_wrapper:
+                try:
+                    df = tushare.get_realtime_quotes(l, proxyManager=self.proxyManager)
+                    if(df_result is None):
+                        df_result = df
+                    else:
+                        df_result = df_result.append(df)
+                except Exception as e:
+                    DataLoader._logger.error('load data error, use_proxy = {}, e = {}'.format(self.use_proxy, e))
+                    self.use_proxy = True
+                    self.proxyManager.remove_proxy()
+        else:
+            for i, l in enumerate(list_wrapper):
+                try:
+                    if(i == 0):
+                        df = tushare.get_realtime_quotes(l)
+                    else:
+                        df = tushare.get_realtime_quotes(l, proxyManager=self.proxyManager)
+                    if(df_result is None):
+                        df_result = df
+                    else:
+                        df_result = df_result.append(df)    
+                except Exception as e:
+                    DataLoader._logger.error('load data error, use_proxy = {}, e = {}'.format(self.use_proxy, e))
+                    self.use_proxy = True
+                    self.proxyManager.remove_proxy()
+        return df_result
+        
 
 
 

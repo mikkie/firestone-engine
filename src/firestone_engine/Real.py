@@ -56,10 +56,16 @@ class Real(object):
             self.load_data()
             if(len(self.data['data']) == 0):
                 return {'state' : self.trade['state']}
-            if(self.data['data'][-1]['time'] == self.lastRunTime):
-                return {'state' : self.trade['state']}
-            self.lastRunTime = self.data['data'][-1]['time']
-            if(self.strategy.run(self.trade, self.config, self.data['data'], self.data['index'])):
+            if(not self.is_batch()):
+                if(self.data['data'][-1]['time'] == self.lastRunTime):
+                    return {'state' : self.trade['state']}
+                self.lastRunTime = self.data['data'][-1]['time']
+            flag = False
+            if(self.is_batch()):
+                flag = self.strategy.run(self.trade, self.config, self.db, self.data['data'], self.data['index'])
+            else:
+                flag = self.strategy.run(self.trade, self.config, self.data['data'], self.data['index'])
+            if(flag):
                 result = self.createOrder()
                 if(result['state'] == Constants.STATE[2]):
                     if(self.strategyMeta['op'] == 'buy'):
@@ -81,15 +87,41 @@ class Real(object):
 
 
     def load_data(self):
-        data = self.data_db[self.trade['params']['code'] + '-' + self.date].find()
-        if(self.trade['params']['code'].startswith('3')):
-            index = self.data_db[Constants.INDEX[5] + '-' + self.date].find()
+        if(self.is_batch()):
+            self.load_batch_data()
         else:
-            index = self.data_db[Constants.INDEX[0] + '-' + self.date].find()    
+            data = self.data_db[self.trade['params']['code'] + '-' + self.date].find()
+            if(self.trade['params']['code'].startswith('3')):
+                index = self.data_db[Constants.INDEX[5] + '-' + self.date].find()
+            else:
+                index = self.data_db[Constants.INDEX[0] + '-' + self.date].find()    
+            self.data = {
+                'data' : list(data),
+                'index' : list(index)
+            }
+
+
+
+    def is_batch(self):
+        return ',' in self.trade['params']['code']
+
+
+    def load_batch_data(self):
         self.data = {
-            'data' : list(data),
-            'index' : list(index)
+            'data' : {},
+            'index' : {}
         }
+        codes = self.trade['params']['code'].split(',')
+        for code in codes:
+            data = self.data_db[code + '-' + self.date].find()
+            self.data['data'][code] = list(data)
+            if(code.startswith('3') and Constants.INDEX[5] not in self.data['index']):
+                index = self.data_db[Constants.INDEX[5] + '-' + self.date].find()
+                self.data['index'][Constants.INDEX[5]] = list(index)
+            elif(Constants.INDEX[0] not in self.data['index']):
+                index = self.data_db[Constants.INDEX[0] + '-' + self.date].find()
+                self.data['index'][Constants.INDEX[0]] = list(index)
+
 
 
 
@@ -103,9 +135,20 @@ class Real(object):
         return self.db[self.cols['configs']].update_one({"_id" : self.config['_id']}, update)
 
 
+    def get_data(self):
+        if(self.is_batch()):
+            return self.strategy.get_match_data()
+        return self.data['data']
+    
+    
+    def get_code(self):
+        if(self.is_batch()):
+            return self.get_data()[-1]['code']
+        return self.trade['params']['code']
+
     def createOrder(self):
-        code = self.trade['params']['code']
-        price = float(self.data['data'][-1]['price'])
+        code = self.get_code()
+        price = float(self.get_data()[-1]['price'])
         if(self.strategyMeta['op'] == 'buy'):
             amount = float(self.trade['params']['volume'])
             volume = int(amount / price / 100) * 100

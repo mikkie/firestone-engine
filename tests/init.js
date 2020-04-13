@@ -132,6 +132,26 @@ db.strategies.insertMany([{
         "volume" : "1000",
         "strategyId" : "5da19b7d181fc3600c5544c3"
     }
+},{
+    "_id" : ObjectId("5da19b7d181fc3600c5544c6"),
+    "name" : "批量异动拉升",
+    "description" : "同时对一组股票进行异动拉升监控",
+    "op" : "buy",
+    "url" : "BatchYdls",
+    "parameters" : {
+        "code" : "",
+        "executeDate" : "",
+        "monitorTime" : {
+            "start" : "00:00",
+            "end" : "23:59"
+        },
+        "desc" : "xxx",
+        "strategyId" : "5da19b7d181fc3600c5544c3",
+        "open_percent_low" : "-1.0",
+        "open_percent_high" : "3.5",
+        "max_stock_percent" : "7.0",
+        "volume" : "1000"
+    }
 }]);
 db.mocktrades.insertMany([{
     "code" : "300691",
@@ -358,6 +378,30 @@ db.mocktrades.insertMany([{
         "max_percent" : "5.00",
         "volume" : "1000",
         "strategyId" : "5da19b7d181fc3600c5544c3"
+    }
+},
+{
+    "_id" : ObjectId("5db7e0a555609bb27252edb8"),
+    "code" : "300448,000993",
+    "state" : "运行中",
+    "result" : "无",
+    "userId" : ObjectId("5d905db9fc84d3224b0eb59c"),
+    "strategyId" : ObjectId("5da19b7d181fc3600c5544c6"),
+    "createDate" : ISODate("2020-04-10T00:00:00.000Z"),
+    "deleted" : false,
+    "params" : {
+        "code" : "",
+        "executeDate" : "",
+        "monitorTime" : {
+            "start" : "00:00",
+            "end" : "23:59"
+        },
+        "desc" : "xxx",
+        "strategyId" : "5da19b7d181fc3600c5544c3",
+        "open_percent_low" : "-1.0",
+        "open_percent_high" : "3.5",
+        "max_stock_percent" : "-3.0",
+        "volume" : "1000"
     }
 }
 ]);

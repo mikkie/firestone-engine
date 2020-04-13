@@ -6,9 +6,10 @@ mongoimport -d firestone-test -c hot_concept "tests\concept\hot_concept.json"
 mongo 127.0.0.1/firestone-test "C:/aqua/firestone-engine/tests/concept/new_hot_concept.js"
 REM mongo 127.0.0.1/firestone-data "c:/aqua/firestone-engine/tests/initData.js"
 REM mongo 127.0.0.1/firestone-data "c:/aqua/firestone-engine/tests/strategies/ydls.js"
-pipenv run python -m unittest tests/strategies/TestBasic.py
-pipenv run python -m unittest tests/strategies/TestBasicSell.py
-pipenv run python -m unittest tests/strategies/TestYdls.py
-pipenv run python -m unittest tests/TestMock.py
-pipenv run python -m unittest tests/TestDataloader.py
-pipenv run python -m unittest tests/strategies/TestConceptPick.py
+REM pipenv run python -m unittest tests/strategies/TestBasic.py
+REM pipenv run python -m unittest tests/strategies/TestBasicSell.py
+REM pipenv run python -m unittest tests/strategies/TestYdls.py
+REM pipenv run python -m unittest tests/TestMock.py
+REM pipenv run python -m unittest tests/TestDataloader.py
+REM pipenv run python -m unittest tests/strategies/TestConceptPick.py
+pipenv run python -m unittest tests/strategies/TestBatchYdls.py
