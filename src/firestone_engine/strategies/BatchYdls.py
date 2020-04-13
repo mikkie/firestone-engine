@@ -66,7 +66,8 @@ class BatchYdls(object):
 
     def get_max_stock_percent(self):
         data_list = []
-        for code, data in self.data.items():
+        for item in self.data.items():
+            data = item[1]
             data_list.append(data[-1])
         df = pd.DataFrame(data_list)
         df['percent'] = (df['price'].astype(float) - df['pre_close'].astype(float)) / df['pre_close'].astype(float) * 100
