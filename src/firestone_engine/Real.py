@@ -10,6 +10,7 @@ from .strategies.Basic import Basic
 from .strategies.Ydls import Ydls
 from .strategies.BasicSell import BasicSell
 from .strategies.ConceptPick import ConceptPick
+from .strategies.BatchYdls import BatchYdls
 
 class Real(object):
 

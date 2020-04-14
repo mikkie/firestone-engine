@@ -5,5 +5,5 @@ mongo 127.0.0.1/firestone-data --eval "db.getCollection('300448-2019-12-10-m').d
 start dist\main.exe 300448 000993 cyb sh --date 2019-12-10 --hours * --minutes * -m -v
 start dist\calculate.exe 5db7e0a555609bb27252edb8 --date 2019-12-10-m --hours * --minutes * -m -v -i -t
 rem pipenv run firerock 5db7e0a555609bb27252edb8 --date 2019-12-10-m --hours * --minutes * -m -v -i -t -d
-timeout /t 1800 /nobreak > nul
+timeout /t 900 /nobreak > nul
 pipenv run python -m unittest tests/e2e/batchydls/CheckBatchYdls.py
