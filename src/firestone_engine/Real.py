@@ -148,8 +148,10 @@ class Real(object):
         return self.trade['params']['code']
 
     def createOrder(self):
+        data = self.get_data()[-1]
         code = self.get_code()
-        price = float(self.get_data()[-1]['price'])
+        price = float(data['price'])
+        Real._logger.info(f'start create order for code = {code}, time = {data["time"]}')
         if(self.strategyMeta['op'] == 'buy'):
             amount = float(self.trade['params']['volume'])
             volume = int(amount / price / 100) * 100
